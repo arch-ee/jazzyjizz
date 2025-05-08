@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import { Button } from "../../components/ui/button";
-import { ShoppingBag, Menu, X } from "lucide-react";
+import { ShoppingBag, Menu, X, Settings } from "lucide-react";
 
 const Header = () => {
   const { totalItems } = useCart();
@@ -23,6 +23,17 @@ const Header = () => {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center space-x-2">
+          <Link to="/admin">
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="sketchy-button"
+            >
+              <Settings size={16} className="mr-1" />
+              Admin Panel
+            </Button>
+          </Link>
+
           {user ? (
             <div className="flex items-center space-x-2">
               <span className="text-sm text-[#333]">
@@ -78,6 +89,15 @@ const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-[#c0c0c0] border-t border-[#808080] py-2">
           <div className="container mx-auto px-4 flex flex-col space-y-2">
+            <Link
+              to="/admin"
+              className="text-[#333] py-1 flex items-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <Settings size={16} className="mr-1" />
+              Admin Panel
+            </Link>
+            
             {user?.isAdmin && (
               <Link
                 to="/admin"
@@ -127,7 +147,7 @@ const Header = () => {
                 className="sketchy-button w-full flex justify-center"
               >
                 <ShoppingBag size={16} className="mr-2" />
-                Cart ({totalItems})
+                Your Cart ({totalItems})
               </Button>
             </Link>
           </div>

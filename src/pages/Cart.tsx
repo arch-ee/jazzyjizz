@@ -36,9 +36,7 @@ const Cart = () => {
   };
   
   const handlePlaceOrder = () => {
-    const shipping = subtotal > 35 ? 0 : 4.99;
-    const tax = subtotal * 0.07;
-    const total = subtotal + shipping + tax;
+    const total = subtotal; // No shipping or tax
     
     const order = addOrder(customerInfo, cart, total);
     if (order && order.id) {
@@ -57,11 +55,11 @@ const Cart = () => {
       <Main>
         <div className="container mx-auto px-4 py-12">
           <div className="text-center py-12">
-            <h1 className="text-3xl font-bold mb-4">Your Candy Cart is Empty</h1>
-            <p className="text-gray-600 mb-8">Let's add some sweet treats to your cart!</p>
+            <h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
+            <p className="text-gray-600 mb-8">Add some products to your cart</p>
             <Link to="/">
-              <Button className="bg-gradient-to-r from-candy-pink to-candy-purple hover:from-candy-purple hover:to-candy-pink">
-                Browse Candies
+              <Button className="sketchy-button">
+                Explore Products
               </Button>
             </Link>
           </div>
@@ -73,7 +71,7 @@ const Cart = () => {
   return (
     <Main>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Your Candy Cart</h1>
+        <h1 className="text-3xl font-bold mb-8">Your Cart</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-2">
@@ -97,18 +95,6 @@ const Cart = () => {
           
           <div>
             <CartSummary onCheckout={handleCheckout} />
-            
-            <div className="mt-6 candy-card p-6">
-              <h3 className="text-lg font-medium mb-3">Need Help?</h3>
-              <p className="text-gray-600 mb-4">
-                Have questions about our candy or the ordering process? We're here to help!
-              </p>
-              <p className="text-sm text-gray-500">
-                Contact us at: <br />
-                <strong>Email:</strong> support@candycarnival.com <br />
-                <strong>Phone:</strong> (555) 123-4567
-              </p>
-            </div>
           </div>
         </div>
         
@@ -118,7 +104,7 @@ const Cart = () => {
             <DialogHeader>
               <DialogTitle>Complete Your Order</DialogTitle>
               <DialogDescription>
-                Please provide your information to complete your candy order.
+                Please provide your information to complete your order.
               </DialogDescription>
             </DialogHeader>
             
@@ -155,7 +141,7 @@ const Cart = () => {
                   name="address"
                   value={customerInfo.address}
                   onChange={handleInputChange}
-                  placeholder="123 Candy Lane, Sweet City, SC 12345"
+                  placeholder="123 Main St, City, State, ZIP"
                   required
                   rows={3}
                 />
@@ -173,7 +159,7 @@ const Cart = () => {
               </Button>
               <Button
                 type="button"
-                className="bg-gradient-to-r from-candy-pink to-candy-red hover:from-candy-red hover:to-candy-pink"
+                className="sketchy-button"
                 onClick={handlePlaceOrder}
                 disabled={!customerInfo.name || !customerInfo.email || !customerInfo.address}
               >
@@ -192,7 +178,7 @@ const Cart = () => {
             
             <div className="py-4">
               <div className="bg-green-50 text-green-700 p-4 rounded-lg mb-4">
-                <p className="font-medium">Thank you for your sweet order!</p>
+                <p className="font-medium">Thank you for your order!</p>
                 <p className="text-sm mt-1">
                   Your order #{orderId.slice(0, 8)} has been received and is being processed.
                 </p>
@@ -203,13 +189,13 @@ const Cart = () => {
               </p>
               
               <p className="text-gray-600">
-                Your delicious candies will be on their way to you soon!
+                Your products will be shipped soon.
               </p>
             </div>
             
             <DialogFooter>
               <Link to="/" className="w-full">
-                <Button className="w-full">
+                <Button className="w-full sketchy-button">
                   Continue Shopping
                 </Button>
               </Link>

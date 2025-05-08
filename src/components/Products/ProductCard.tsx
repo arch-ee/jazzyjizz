@@ -15,6 +15,24 @@ const ProductCard = ({ product }: ProductCardProps) => {
     addToCart(product, 1);
   };
 
+  // Helper function to display currencies
+  const displayCurrencies = () => {
+    if (!product.currencies || product.currencies.length === 0) {
+      return <p className="font-bold mt-1">{product.price} pencils</p>;
+    }
+
+    return (
+      <div className="mt-1">
+        <p className="font-bold">{product.price} pencils</p>
+        {product.currencies.map((currency, index) => (
+          <p key={index} className="text-sm mt-0.5">
+            {currency.amount} {currency.type}
+          </p>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="sketchy-card">
       <div className="aspect-square relative overflow-hidden">
@@ -31,8 +49,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       </div>
       <div className="p-2 bg-[#c0c0c0]">
         <h3 className="font-bold">{product.name}</h3>
-        <p className="text-sm text-gray-600 mt-1">{product.category}</p>
-        <p className="font-bold mt-1">${product.price.toFixed(2)}</p>
+        {displayCurrencies()}
         <div className="mt-2">
           <Button 
             onClick={handleAddToCart} 
