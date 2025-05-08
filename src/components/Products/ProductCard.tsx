@@ -2,7 +2,7 @@
 import { useCart } from '../../context/CartContext';
 import { Product } from '../../types';
 import { Button } from '../ui/button';
-import { ShoppingBag, Plus } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
@@ -16,30 +16,30 @@ const ProductCard = ({ product }: ProductCardProps) => {
   };
 
   return (
-    <div className="candy-card group">
+    <div className="sketchy-card">
       <div className="aspect-square relative overflow-hidden">
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-full object-cover"
         />
         {!product.inStock && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <p className="text-white font-semibold text-lg">Out of Stock</p>
+            <p className="text-white font-bold">Out of Stock</p>
           </div>
         )}
       </div>
-      <div className="p-4">
-        <h3 className="font-semibold text-lg">{product.name}</h3>
-        <p className="text-sm text-gray-500 mt-1">{product.category}</p>
-        <p className="text-primary font-bold mt-2">${product.price.toFixed(2)}</p>
-        <div className="mt-4">
+      <div className="p-2 bg-[#c0c0c0]">
+        <h3 className="font-bold">{product.name}</h3>
+        <p className="text-sm text-gray-600 mt-1">{product.category}</p>
+        <p className="font-bold mt-1">${product.price.toFixed(2)}</p>
+        <div className="mt-2">
           <Button 
             onClick={handleAddToCart} 
             disabled={!product.inStock}
-            className="w-full bg-gradient-to-r from-candy-pink to-candy-peach hover:from-candy-peach hover:to-candy-pink"
+            className="sketchy-button w-full text-center flex justify-center"
           >
-            <ShoppingBag size={16} className="mr-2" />
+            <ShoppingBag size={16} className="mr-1" />
             Add to Cart
           </Button>
         </div>

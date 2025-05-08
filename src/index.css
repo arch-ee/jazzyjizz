@@ -5,82 +5,65 @@
 
 @layer base {
   :root {
-    --background: 340 100% 99%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 95%;
+    --foreground: 0 0% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 90%;
+    --card-foreground: 0 0% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 90%;
+    --popover-foreground: 0 0% 15%;
 
-    --primary: 340 80% 45%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 0 0% 40%;
+    --primary-foreground: 0 0% 95%;
 
-    --secondary: 340 100% 95%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 0 0% 80%;
+    --secondary-foreground: 0 0% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 85%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 262 60% 75%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 0 0% 75%;
+    --accent-foreground: 0 0% 15%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 95%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 340 80% 45%;
+    --border: 0 0% 70%;
+    --input: 0 0% 85%;
+    --ring: 0 0% 40%;
 
-    --radius: 0.75rem;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 340 80% 45%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 340 100% 95%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 340 80% 45%;
+    --radius: 0.25rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 0 0% 15%;
+    --foreground: 0 0% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 25%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 25%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 340 80% 45%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 0 0% 60%;
+    --primary-foreground: 0 0% 15%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 0 0% 30%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 0 0% 30%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 262 60% 75%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 0 0% 35%;
+    --accent-foreground: 0 0% 95%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 95%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 340 80% 45%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 0 0% 40%;
+    --input: 0 0% 30%;
+    --ring: 0 0% 70%;
   }
 }
 
@@ -92,15 +75,24 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: "Courier New", monospace;
   }
 }
 
 @layer components {
-  .candy-card {
-    @apply bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300;
+  .sketchy-card {
+    @apply bg-[#c0c0c0] border border-[#808080] shadow-md overflow-hidden hover:shadow-lg transition-all duration-300;
   }
   
-  .candy-button {
-    @apply bg-gradient-to-r from-candy-pink to-candy-peach hover:from-candy-peach hover:to-candy-pink text-foreground font-medium rounded-lg px-5 py-2.5 transition-all duration-300;
+  .sketchy-button {
+    @apply bg-[#c0c0c0] border-t border-r border-b border-l border-t-white border-l-white border-b-[#808080] border-r-[#808080] text-[#333333] font-normal px-4 py-1 hover:bg-[#d3d3d3] active:border-t-[#808080] active:border-l-[#808080] active:border-b-white active:border-r-white;
+  }
+
+  .window-header {
+    @apply bg-[#000080] text-white px-2 py-1 flex justify-between items-center;
+  }
+  
+  .window-close {
+    @apply flex items-center justify-center w-5 h-5 bg-[#c0c0c0] border border-t-white border-l-white border-b-[#808080] border-r-[#808080] text-black font-bold;
   }
 }

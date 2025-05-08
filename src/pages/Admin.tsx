@@ -16,43 +16,60 @@ const Admin = () => {
   return (
     <AdminRoute>
       <Main>
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-            <div>
-              <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-              <p className="text-gray-600">Manage your candy store</p>
+        <div className="container mx-auto px-2 py-4">
+          <div className="bg-[#c0c0c0] border border-[#808080] mb-4">
+            <div className="window-header">
+              <span>Admin Panel</span>
+              <span className="window-close">×</span>
             </div>
             
-            {activeTab === "products" && (
-              <Button 
-                className="mt-4 md:mt-0 bg-gradient-to-r from-candy-purple to-candy-pink hover:from-candy-pink hover:to-candy-purple"
-                onClick={() => setShowAddProductDialog(true)}
-              >
-                Add New Product
-              </Button>
-            )}
+            <div className="p-3">
+              <div className="flex justify-between items-center mb-4">
+                {activeTab === "products" && (
+                  <Button 
+                    className="sketchy-button"
+                    onClick={() => setShowAddProductDialog(true)}
+                  >
+                    Add Product
+                  </Button>
+                )}
+              </div>
+              
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+                <TabsList className="flex">
+                  <TabsTrigger 
+                    value="products" 
+                    className="flex-1 sketchy-button data-[state=active]:bg-[#a0a0a0]"
+                  >
+                    Products
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="orders" 
+                    className="flex-1 sketchy-button data-[state=active]:bg-[#a0a0a0]"
+                  >
+                    Orders
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="products" className="bg-[#d0d0d0] p-3 border border-[#808080]">
+                  <ProductList />
+                </TabsContent>
+                
+                <TabsContent value="orders" className="bg-[#d0d0d0] p-3 border border-[#808080]">
+                  <OrderList />
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
-          
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="products">Products</TabsTrigger>
-              <TabsTrigger value="orders">Orders</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="products" className="candy-card p-6">
-              <ProductList />
-            </TabsContent>
-            
-            <TabsContent value="orders" className="candy-card p-6">
-              <OrderList />
-            </TabsContent>
-          </Tabs>
           
           {/* Add Product Dialog */}
           <Dialog open={showAddProductDialog} onOpenChange={setShowAddProductDialog}>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="bg-[#c0c0c0] border border-[#808080] shadow-md max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Add New Product</DialogTitle>
+                <div className="window-header">
+                  <DialogTitle>Add New Product</DialogTitle>
+                  <span className="window-close" onClick={() => setShowAddProductDialog(false)}>×</span>
+                </div>
               </DialogHeader>
               <ProductForm 
                 mode="create" 

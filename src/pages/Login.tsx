@@ -5,7 +5,6 @@ import { Navigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
 import Main from "../components/Layout/Main";
 
 const Login = () => {
@@ -41,60 +40,57 @@ const Login = () => {
 
   return (
     <Main>
-      <div className="container mx-auto px-4 py-12 flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Admin Login</CardTitle>
-            <CardDescription className="text-center">
-              Enter your credentials to access the admin dashboard
-            </CardDescription>
-          </CardHeader>
-          <form onSubmit={handleLogin}>
-            <CardContent className="space-y-4">
-              {error && (
-                <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                  {error}
-                </div>
-              )}
-              
-              <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  id="username"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  placeholder="Enter your username"
-                />
+      <div className="container mx-auto px-4 py-8 flex items-center justify-center">
+        <div className="w-full max-w-md bg-[#c0c0c0] border border-[#808080] shadow-md">
+          <div className="window-header">
+            <span>Admin Login</span>
+            <span className="window-close">×</span>
+          </div>
+          
+          <form onSubmit={handleLogin} className="p-4">
+            {error && (
+              <div className="p-2 mb-4 bg-[#ff0000] border border-[#800000] text-white">
+                {error}
               </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  placeholder="Enter your password"
-                />
-              </div>
-            </CardContent>
+            )}
             
-            <CardFooter>
+            <div className="mb-4">
+              <Label htmlFor="username" className="block mb-1">Username</Label>
+              <Input
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                placeholder="Enter your username"
+                className="w-full border border-[#808080] bg-white p-1"
+              />
+            </div>
+            
+            <div className="mb-4">
+              <Label htmlFor="password" className="block mb-1">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="Enter your password"
+                className="w-full border border-[#808080] bg-white p-1"
+              />
+            </div>
+            
+            <div className="flex justify-end">
               <Button 
                 type="submit" 
-                className="w-full bg-gradient-to-r from-candy-purple to-candy-pink hover:from-candy-pink hover:to-candy-purple"
+                className="sketchy-button"
                 disabled={isLoggingIn}
               >
                 {isLoggingIn ? 'Logging in...' : 'Login'}
               </Button>
-            </CardFooter>
+            </div>
           </form>
-        </Card>
+        </div>
       </div>
     </Main>
   );
