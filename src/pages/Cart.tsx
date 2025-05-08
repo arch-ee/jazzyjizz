@@ -41,7 +41,11 @@ const Cart = () => {
     const total = subtotal + shipping + tax;
     
     const order = addOrder(customerInfo, cart, total);
-    setOrderId(order.id);
+    if (order && order.id) {
+      setOrderId(order.id);
+    } else {
+      setOrderId("unknown"); // Fallback in case order doesn't have an id
+    }
     
     setShowCheckoutDialog(false);
     setShowConfirmationDialog(true);

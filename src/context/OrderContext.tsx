@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Order, CartItem } from '../types';
 import { v4 as uuidv4 } from 'uuid';
@@ -6,7 +5,7 @@ import { useToast } from '../hooks/use-toast';
 
 type OrderContextType = {
   orders: Order[];
-  addOrder: (customerInfo: { name: string; email: string; address: string }, items: CartItem[], total: number) => void;
+  addOrder: (customerInfo: { name: string; email: string; address: string }, items: CartItem[], total: number) => Order;
   updateOrderStatus: (id: string, status: Order['status']) => void;
   getOrder: (id: string) => Order | undefined;
 };
@@ -41,7 +40,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [orders]);
 
-  const addOrder = (customerInfo: { name: string; email: string; address: string }, items: CartItem[], total: number) => {
+  const addOrder = (customerInfo: { name: string; email: string; address: string }, items: CartItem[], total: number): Order => {
     const newOrder: Order = {
       id: uuidv4(),
       customer: customerInfo,
