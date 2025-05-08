@@ -75,6 +75,7 @@ export default {
 			},
 			fontFamily: {
 				'mono': ['Courier New', 'monospace'],
+				'comic-sans': ['"Comic Sans MS"', 'cursive', 'sans-serif'],
 			},
 		}
 	},

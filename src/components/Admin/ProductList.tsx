@@ -36,7 +36,7 @@ const ProductList = () => {
   };
 
   if (products.length === 0) {
-    return <p className="text-center py-10">No products available. Add some candy!</p>;
+    return <p className="text-center py-10 font-comic-sans">No products available. Add some candy!</p>;
   }
 
   return (
@@ -44,17 +44,17 @@ const ProductList = () => {
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-100">
-            <tr>
+            <tr className="font-comic-sans">
               <th className="px-4 py-2 text-left">Product</th>
-              <th className="px-4 py-2 text-left">Category</th>
               <th className="px-4 py-2 text-left">Price</th>
+              <th className="px-4 py-2 text-left">Currencies</th>
               <th className="px-4 py-2 text-left">Stock</th>
               <th className="px-4 py-2 text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             {products.map((product) => (
-              <tr key={product.id} className="border-b hover:bg-gray-50">
+              <tr key={product.id} className="border-b hover:bg-gray-50 font-comic-sans">
                 <td className="px-4 py-4">
                   <div className="flex items-center">
                     <div className="h-10 w-10 flex-shrink-0">
@@ -69,8 +69,20 @@ const ProductList = () => {
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-4">{product.category}</td>
                 <td className="px-4 py-4">${product.price.toFixed(2)}</td>
+                <td className="px-4 py-4">
+                  {product.currencies && product.currencies.length > 0 ? (
+                    <div className="text-xs">
+                      {product.currencies.map((currency, index) => (
+                        <span key={index} className="mr-1">
+                          {currency.amount} {currency.type}{index < product.currencies!.length - 1 ? ", " : ""}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="text-gray-400">None</span>
+                  )}
+                </td>
                 <td className="px-4 py-4">
                   <span className={`px-2 py-1 rounded-full text-xs ${product.inStock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                     {product.inStock ? 'In Stock' : 'Out of Stock'}
@@ -82,6 +94,7 @@ const ProductList = () => {
                       variant="outline" 
                       size="sm" 
                       onClick={() => handleView(product)}
+                      className="font-comic-sans"
                     >
                       <Eye size={16} />
                     </Button>
@@ -89,6 +102,7 @@ const ProductList = () => {
                       variant="outline" 
                       size="sm" 
                       onClick={() => handleEdit(product)}
+                      className="font-comic-sans"
                     >
                       <Pencil size={16} />
                     </Button>
@@ -97,12 +111,12 @@ const ProductList = () => {
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="text-red-500 hover:text-red-600"
+                          className="text-red-500 hover:text-red-600 font-comic-sans"
                         >
                           <Trash2 size={16} />
                         </Button>
                       </AlertDialogTrigger>
-                      <AlertDialogContent>
+                      <AlertDialogContent className="font-comic-sans">
                         <AlertDialogHeader>
                           <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
                           <AlertDialogDescription>
@@ -127,7 +141,7 @@ const ProductList = () => {
 
       {/* Edit Product Dialog */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl font-comic-sans">
           <DialogHeader>
             <DialogTitle>Edit Product</DialogTitle>
           </DialogHeader>
@@ -143,7 +157,7 @@ const ProductList = () => {
 
       {/* View Product Dialog */}
       <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl font-comic-sans">
           <DialogHeader>
             <DialogTitle>Product Details</DialogTitle>
           </DialogHeader>
@@ -163,9 +177,20 @@ const ProductList = () => {
               </div>
               <div className="p-6">
                 <h3 className="text-xl font-semibold">{viewingProduct.name}</h3>
-                <p className="mt-2 text-sm text-gray-500">{viewingProduct.category}</p>
                 <p className="mt-4">{viewingProduct.description}</p>
                 <p className="mt-4 text-lg font-bold">${viewingProduct.price.toFixed(2)}</p>
+                
+                {viewingProduct.currencies && viewingProduct.currencies.length > 0 && (
+                  <div className="mt-4">
+                    <p className="font-semibold">Alternative Currencies:</p>
+                    <ul className="mt-1 list-disc list-inside">
+                      {viewingProduct.currencies.map((currency, index) => (
+                        <li key={index}>{currency.amount} {currency.type}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
                 <div className="mt-4">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                     viewingProduct.inStock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'

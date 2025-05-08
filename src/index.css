@@ -75,7 +75,7 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
-    font-family: "Courier New", monospace;
+    font-family: "Comic Sans MS", "Courier New", monospace;
   }
 }
 
@@ -94,5 +94,9 @@
   
   .window-close {
     @apply flex items-center justify-center w-5 h-5 bg-[#c0c0c0] border border-t-white border-l-white border-b-[#808080] border-r-[#808080] text-black font-bold;
+  }
+  
+  .font-comic-sans {
+    font-family: "Comic Sans MS", "Courier New", monospace;
   }
 }

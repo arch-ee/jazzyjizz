@@ -19,7 +19,7 @@ const Admin = () => {
         <div className="container mx-auto px-2 py-4">
           <div className="bg-[#c0c0c0] border border-[#808080] mb-4">
             <div className="window-header">
-              <span>Admin Panel</span>
+              <span className="font-comic-sans">Admin Panel</span>
               <span className="window-close">×</span>
             </div>
             
@@ -27,7 +27,7 @@ const Admin = () => {
               <div className="flex justify-between items-center mb-4">
                 {activeTab === "products" && (
                   <Button 
-                    className="sketchy-button"
+                    className="sketchy-button font-comic-sans"
                     onClick={() => setShowAddProductDialog(true)}
                   >
                     Add Product
@@ -39,13 +39,13 @@ const Admin = () => {
                 <TabsList className="flex">
                   <TabsTrigger 
                     value="products" 
-                    className="flex-1 sketchy-button data-[state=active]:bg-[#a0a0a0]"
+                    className="flex-1 sketchy-button data-[state=active]:bg-[#a0a0a0] font-comic-sans"
                   >
                     Products
                   </TabsTrigger>
                   <TabsTrigger 
                     value="orders" 
-                    className="flex-1 sketchy-button data-[state=active]:bg-[#a0a0a0]"
+                    className="flex-1 sketchy-button data-[state=active]:bg-[#a0a0a0] font-comic-sans"
                   >
                     Orders
                   </TabsTrigger>
@@ -67,7 +67,7 @@ const Admin = () => {
             <DialogContent className="bg-[#c0c0c0] border border-[#808080] shadow-md max-w-2xl">
               <DialogHeader>
                 <div className="window-header">
-                  <DialogTitle>Add New Product</DialogTitle>
+                  <DialogTitle className="font-comic-sans">Add New Product</DialogTitle>
                   <span className="window-close" onClick={() => setShowAddProductDialog(false)}>×</span>
                 </div>
               </DialogHeader>

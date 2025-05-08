@@ -6,7 +6,6 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Switch } from '../ui/switch';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
 
@@ -16,26 +15,32 @@ interface ProductFormProps {
   mode: 'create' | 'edit';
 }
 
+interface Currency {
+  type: string;
+  amount: number;
+}
+
 const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
   const { addProduct, updateProduct } = useProducts();
   const [isLoading, setIsLoading] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  
+  const initialCurrencies = product?.currencies || [];
   
   const [formData, setFormData] = useState({
     name: product?.name || '',
     description: product?.description || '',
     price: product?.price || 0,
     image: product?.image || '/placeholder.svg',
-    category: product?.category || '',
     inStock: product?.inStock !== undefined ? product.inStock : true,
   });
+
+  const [currencies, setCurrencies] = useState<Currency[]>(initialCurrencies);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleCategoryChange = (value: string) => {
-    setFormData(prev => ({ ...prev, category: value }));
   };
 
   const handleStockChange = (checked: boolean) => {
@@ -47,15 +52,53 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
     setFormData(prev => ({ ...prev, price: isNaN(value) ? 0 : value }));
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAddCurrency = () => {
+    setCurrencies([...currencies, { type: 'pencil', amount: 1 }]);
+  };
+
+  const handleRemoveCurrency = (index: number) => {
+    const updatedCurrencies = [...currencies];
+    updatedCurrencies.splice(index, 1);
+    setCurrencies(updatedCurrencies);
+  };
+
+  const handleCurrencyChange = (index: number, field: 'type' | 'amount', value: string | number) => {
+    const updatedCurrencies = [...currencies];
+    updatedCurrencies[index] = { 
+      ...updatedCurrencies[index], 
+      [field]: field === 'amount' ? Number(value) : value 
+    };
+    setCurrencies(updatedCurrencies);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
+      // Prepare product data with currencies
+      const productData = {
+        ...formData,
+        currencies: currencies,
+        image: imagePreview || formData.image // Use the image preview if available
+      };
+
       if (mode === 'create') {
-        addProduct(formData);
+        addProduct(productData);
       } else if (mode === 'edit' && product) {
-        updateProduct(product.id, formData);
+        updateProduct(product.id, productData);
       }
       
       if (onSubmit) onSubmit();
@@ -67,9 +110,11 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
           description: '',
           price: 0,
           image: '/placeholder.svg',
-          category: '',
           inStock: true,
         });
+        setCurrencies([]);
+        setImageFile(null);
+        setImagePreview('');
       }
     } catch (error) {
       console.error("Error saving product:", error);
@@ -78,7 +123,7 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
     }
   };
 
-  const categories = ["Sweets", "Chocolate", "Gummy", "Chewy", "Hard Candy", "Lollipop", "Sour", "Sugar-Free"];
+  const currencyTypes = ["pencil", "gluestick", "scissors", "lead", "eraser", "ruler", "crayon"];
 
   return (
     <Card>
@@ -96,6 +141,7 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
               onChange={handleChange}
               placeholder="Sugar Sprinkle Delights"
               required
+              className="font-comic-sans"
             />
           </div>
           
@@ -109,6 +155,7 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
               placeholder="Delicious sugar sprinkles that melt in your mouth..."
               rows={3}
               required
+              className="font-comic-sans"
             />
           </div>
           
@@ -124,39 +171,79 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
                 min="0"
                 step="0.01"
                 required
+                className="font-comic-sans"
               />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
-              <Select
-                value={formData.category}
-                onValueChange={handleCategoryChange}
-              >
-                <SelectTrigger id="category">
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map(category => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="image">Image URL</Label>
+            <Label>Alternative Currency</Label>
+            {currencies.map((currency, index) => (
+              <div key={index} className="flex items-center space-x-2 mb-2">
+                <select 
+                  value={currency.type}
+                  onChange={(e) => handleCurrencyChange(index, 'type', e.target.value)}
+                  className="bg-[#c0c0c0] border border-t-white border-l-white border-b-[#808080] border-r-[#808080] h-10 rounded p-2 font-comic-sans"
+                >
+                  {currencyTypes.map((type) => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+                <Input
+                  type="number"
+                  value={currency.amount}
+                  onChange={(e) => handleCurrencyChange(index, 'amount', e.target.value)}
+                  min="1"
+                  className="w-20 font-comic-sans"
+                />
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => handleRemoveCurrency(index)}
+                  className="sketchy-button"
+                >
+                  Remove
+                </Button>
+              </div>
+            ))}
+            <Button 
+              type="button" 
+              onClick={handleAddCurrency}
+              className="sketchy-button mt-2"
+            >
+              Add Currency
+            </Button>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="image">Product Image</Label>
             <Input
               id="image"
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
-              placeholder="/placeholder.svg"
-              required
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="font-comic-sans"
             />
+            {imagePreview && (
+              <div className="mt-2">
+                <p className="mb-1 font-comic-sans">Preview:</p>
+                <img 
+                  src={imagePreview} 
+                  alt="Preview" 
+                  className="h-32 object-contain border border-[#808080]" 
+                />
+              </div>
+            )}
+            {!imagePreview && formData.image && (
+              <div className="mt-2">
+                <p className="mb-1 font-comic-sans">Current Image:</p>
+                <img 
+                  src={formData.image} 
+                  alt="Current" 
+                  className="h-32 object-contain border border-[#808080]" 
+                />
+              </div>
+            )}
           </div>
           
           <div className="flex items-center space-x-2">
@@ -165,14 +252,14 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
               checked={formData.inStock}
               onCheckedChange={handleStockChange}
             />
-            <Label htmlFor="inStock">In Stock</Label>
+            <Label htmlFor="inStock" className="font-comic-sans">In Stock</Label>
           </div>
         </CardContent>
         
         <CardFooter>
           <Button 
             type="submit" 
-            className="w-full bg-gradient-to-r from-candy-purple to-candy-pink hover:from-candy-pink hover:to-candy-purple"
+            className="w-full sketchy-button font-comic-sans"
             disabled={isLoading}
           >
             {isLoading ? 'Saving...' : mode === 'create' ? 'Add Product' : 'Update Product'}

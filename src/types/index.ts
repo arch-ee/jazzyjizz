@@ -5,15 +5,21 @@ export type User = {
   isAdmin: boolean;
 };
 
+export type Currency = {
+  type: string;
+  amount: number;
+};
+
 export type Product = {
   id: string;
   name: string;
   description: string;
   price: number;
   image: string;
-  category: string;
+  category?: string;
   inStock: boolean;
   createdAt: Date;
+  currencies?: Currency[];
 };
 
 export type CartItem = {
