@@ -244,7 +244,7 @@ const OrderList = () => {
                               </div>
                               <div>
                                 <div className="font-medium font-comic-sans">{item.product.name}</div>
-                                <div className="text-xs text-gray-500 font-comic-sans">{item.product.category}</div>
+                                <div className="text-xs text-gray-500 font-comic-sans">{item.product.description.substring(0, 30)}...</div>
                               </div>
                             </div>
                           </TableCell>

@@ -42,7 +42,7 @@ const CartItem = ({ item }: CartItemProps) => {
           <h3>{item.product.name}</h3>
           <p className="ml-4">${(item.product.price * item.quantity).toFixed(2)}</p>
         </div>
-        <p className="mt-1 text-sm text-gray-500">{item.product.category}</p>
+        <p className="mt-1 text-sm text-gray-500">{item.product.description.substring(0, 50)}...</p>
         
         <div className="flex items-center justify-between text-sm mt-2">
           <div className="flex items-center border rounded-md">
