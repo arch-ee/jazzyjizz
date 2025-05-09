@@ -1,4 +1,3 @@
-
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -10,19 +9,17 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
-  // Set base to '/' for local development and './' for GitHub Pages deployment
-  base: './',
+  // Use correct base path for GitHub Pages
+  base: mode === 'production' ? '/jazzyjizz/' : '/',
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
+    mode === 'development' && componentTagger(),
   ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  // Ensure correct asset handling for GitHub Pages
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
