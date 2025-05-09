@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: ./dist  # Adjust if necessary to match your build output folder
+          path: ./dist  # Ensure this path matches your build output
 
   deploy:
     needs: build
@@ -38,7 +38,7 @@ jobs:
         uses: actions/deploy-pages@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          artifact_name: build
-          timeout: 60000  # Adjust the timeout if needed
+          artifact_name: build  # Make sure this matches the artifact name from upload
+          timeout: 60000
           error_count: 10
           reporting_interval: 5000
