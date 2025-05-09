@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.setItem('candy-admin-user', JSON.stringify(user));
         toast({
           title: "Welcome back Admin!",
-          description: "You've successfully signed in to Candy Commerce Carnival.",
+          description: "You've successfully signed in to Jazzy Jizz products. Welcome back.",
         });
         return true;
       } else {
