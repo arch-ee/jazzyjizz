@@ -58,16 +58,9 @@ const ProductDetails = ({ product, isOpen, onClose }: ProductDetailsProps) => {
             <p>{product.description}</p>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h3 className="font-semibold">Price</h3>
-              {displayCurrencies()}
-            </div>
-            
-            <div>
-              <h3 className="font-semibold">Category</h3>
-              <p>{product.category || "Uncategorized"}</p>
-            </div>
+          <div>
+            <h3 className="font-semibold">Price</h3>
+            {displayCurrencies()}
           </div>
           
           <div>

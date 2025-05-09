@@ -16,7 +16,6 @@ export type Product = {
   description: string;
   price: number;
   image: string;
-  category?: string;
   inStock: boolean;
   createdAt: Date;
   currencies?: Currency[];
