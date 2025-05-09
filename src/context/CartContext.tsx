@@ -48,13 +48,13 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         );
         toast({
           title: "Cart updated",
-          description: `Added more ${product.name} to your candy stash!`,
+          description: `Added more ${product.name} to your cart!`,
         });
         return updatedCart;
       } else {
         toast({
           title: "Added to cart",
-          description: `${product.name} added to your candy collection!`,
+          description: `${product.name} added to your cart!`,
         });
         return [...prevCart, {
           id: Date.now().toString(),

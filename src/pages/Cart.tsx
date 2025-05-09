@@ -8,7 +8,6 @@ import { Button } from "../components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { Textarea } from "../components/ui/textarea";
 import Main from "../components/Layout/Main";
 import { Link } from "react-router-dom";
 
@@ -22,11 +21,9 @@ const Cart = () => {
   
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
-    email: "",
-    address: "",
   });
   
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setCustomerInfo(prev => ({ ...prev, [name]: value }));
   };
@@ -36,9 +33,16 @@ const Cart = () => {
   };
   
   const handlePlaceOrder = () => {
-    const total = subtotal; // No shipping or tax
+    const total = subtotal;
     
-    const order = addOrder(customerInfo, cart, total);
+    // Create a simplified customer info object with just the name
+    const simplifiedCustomerInfo = {
+      name: customerInfo.name,
+      email: "", // Empty string as we're removing this field
+      address: "", // Empty string as we're removing this field
+    };
+    
+    const order = addOrder(simplifiedCustomerInfo, cart, total);
     if (order && order.id) {
       setOrderId(order.id);
     } else {
@@ -104,7 +108,7 @@ const Cart = () => {
             <DialogHeader>
               <DialogTitle>Complete Your Order</DialogTitle>
               <DialogDescription>
-                Please provide your information to complete your order.
+                Please provide your name to complete your order.
               </DialogDescription>
             </DialogHeader>
             
@@ -118,32 +122,6 @@ const Cart = () => {
                   onChange={handleInputChange}
                   placeholder="John Doe"
                   required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={customerInfo.email}
-                  onChange={handleInputChange}
-                  placeholder="john@example.com"
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="address">Shipping Address</Label>
-                <Textarea
-                  id="address"
-                  name="address"
-                  value={customerInfo.address}
-                  onChange={handleInputChange}
-                  placeholder="123 Main St, City, State, ZIP"
-                  required
-                  rows={3}
                 />
               </div>
             </div>
@@ -161,7 +139,7 @@ const Cart = () => {
                 type="button"
                 className="sketchy-button"
                 onClick={handlePlaceOrder}
-                disabled={!customerInfo.name || !customerInfo.email || !customerInfo.address}
+                disabled={!customerInfo.name}
               >
                 Place Order
               </Button>
@@ -183,10 +161,6 @@ const Cart = () => {
                   Your order #{orderId.slice(0, 8)} has been received and is being processed.
                 </p>
               </div>
-              
-              <p className="text-gray-600 mb-2">
-                We've sent a confirmation email to {customerInfo.email} with all the details.
-              </p>
               
               <p className="text-gray-600">
                 Your products will be shipped soon.
