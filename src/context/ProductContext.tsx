@@ -53,7 +53,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
 
   // Load products from localStorage or use initial data
   useEffect(() => {
-    const savedProducts = localStorage.getItem('candy-products');
+    const savedProducts = localStorage.getItem('products');
     if (savedProducts) {
       try {
         // Parse the date strings back to Date objects
@@ -74,7 +74,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
   // Save products to localStorage
   useEffect(() => {
     if (products.length > 0) {
-      localStorage.setItem('candy-products', JSON.stringify(products));
+      localStorage.setItem('products', JSON.stringify(products));
     }
   }, [products]);
 

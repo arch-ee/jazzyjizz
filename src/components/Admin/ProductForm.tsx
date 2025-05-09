@@ -8,6 +8,8 @@ import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Switch } from '../ui/switch';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
+import { Plus, Trash2, Save } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 interface ProductFormProps {
   product?: Product;
@@ -126,42 +128,42 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
   const currencyTypes = ["pencil", "gluestick", "scissors", "lead", "eraser", "ruler", "crayon"];
 
   return (
-    <Card>
+    <Card className="bg-[#d0d0d0] border border-[#808080]">
       <CardHeader>
-        <CardTitle>{mode === 'create' ? 'Add New Product' : 'Edit Product'}</CardTitle>
+        <CardTitle className="font-comic-sans">{mode === 'create' ? 'Add New Product' : 'Edit Product'}</CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Product Name</Label>
+            <Label htmlFor="name" className="font-comic-sans">Product Name</Label>
             <Input
               id="name"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Sugar Sprinkle Delights"
+              placeholder="Product Name"
               required
-              className="font-comic-sans"
+              className="font-comic-sans bg-white"
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="font-comic-sans">Description</Label>
             <Textarea
               id="description"
               name="description"
               value={formData.description}
               onChange={handleChange}
-              placeholder="Delicious sugar sprinkles that melt in your mouth..."
+              placeholder="Product description..."
               rows={3}
               required
-              className="font-comic-sans"
+              className="font-comic-sans bg-white"
             />
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="price">Price ($)</Label>
+              <Label htmlFor="price" className="font-comic-sans">Price (pencils)</Label>
               <Input
                 id="price"
                 name="price"
@@ -171,82 +173,98 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
                 min="0"
                 step="0.01"
                 required
-                className="font-comic-sans"
+                className="font-comic-sans bg-white"
               />
             </div>
           </div>
           
           <div className="space-y-2">
-            <Label>Alternative Currency</Label>
+            <div className="flex justify-between items-center">
+              <Label className="font-comic-sans">Alternative Currencies</Label>
+              <Button 
+                type="button" 
+                onClick={handleAddCurrency}
+                className="sketchy-button flex items-center"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                <span className="font-comic-sans">Add</span>
+              </Button>
+            </div>
+            
             {currencies.map((currency, index) => (
-              <div key={index} className="flex items-center space-x-2 mb-2">
-                <select 
+              <div key={index} className="flex items-center space-x-2 mb-2 bg-white p-2 rounded-md">
+                <Select 
                   value={currency.type}
-                  onChange={(e) => handleCurrencyChange(index, 'type', e.target.value)}
-                  className="bg-[#c0c0c0] border border-t-white border-l-white border-b-[#808080] border-r-[#808080] h-10 rounded p-2 font-comic-sans"
+                  onValueChange={(value) => handleCurrencyChange(index, 'type', value)}
                 >
-                  {currencyTypes.map((type) => (
-                    <option key={type} value={type}>{type}</option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full font-comic-sans">
+                    <SelectValue placeholder="Currency Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {currencyTypes.map((type) => (
+                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Input
                   type="number"
                   value={currency.amount}
                   onChange={(e) => handleCurrencyChange(index, 'amount', e.target.value)}
                   min="1"
-                  className="w-20 font-comic-sans"
+                  className="w-20 font-comic-sans bg-white"
                 />
                 <Button 
                   type="button" 
                   variant="outline" 
                   onClick={() => handleRemoveCurrency(index)}
-                  className="sketchy-button"
+                  className="sketchy-button text-red-500 hover:text-red-700 flex items-center"
                 >
-                  Remove
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             ))}
-            <Button 
-              type="button" 
-              onClick={handleAddCurrency}
-              className="sketchy-button mt-2"
-            >
-              Add Currency
-            </Button>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="image">Product Image</Label>
+            <Label htmlFor="image" className="font-comic-sans">Product Image</Label>
             <Input
               id="image"
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              className="font-comic-sans"
+              className="font-comic-sans bg-white"
             />
-            {imagePreview && (
-              <div className="mt-2">
-                <p className="mb-1 font-comic-sans">Preview:</p>
-                <img 
-                  src={imagePreview} 
-                  alt="Preview" 
-                  className="h-32 object-contain border border-[#808080]" 
-                />
-              </div>
-            )}
-            {!imagePreview && formData.image && (
-              <div className="mt-2">
-                <p className="mb-1 font-comic-sans">Current Image:</p>
-                <img 
-                  src={formData.image} 
-                  alt="Current" 
-                  className="h-32 object-contain border border-[#808080]" 
-                />
-              </div>
-            )}
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+              {imagePreview && (
+                <div className="bg-white p-2 rounded-md border border-[#808080]">
+                  <p className="mb-1 font-comic-sans">Preview:</p>
+                  <div className="h-32 flex items-center justify-center">
+                    <img 
+                      src={imagePreview} 
+                      alt="Preview" 
+                      className="h-full object-contain" 
+                    />
+                  </div>
+                </div>
+              )}
+              
+              {!imagePreview && formData.image && (
+                <div className="bg-white p-2 rounded-md border border-[#808080]">
+                  <p className="mb-1 font-comic-sans">Current Image:</p>
+                  <div className="h-32 flex items-center justify-center">
+                    <img 
+                      src={formData.image} 
+                      alt="Current" 
+                      className="h-full object-contain" 
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 bg-white p-3 rounded-md">
             <Switch
               id="inStock"
               checked={formData.inStock}
@@ -259,9 +277,10 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
         <CardFooter>
           <Button 
             type="submit" 
-            className="w-full sketchy-button font-comic-sans"
+            className="w-full sketchy-button font-comic-sans flex items-center justify-center"
             disabled={isLoading}
           >
+            <Save className="h-4 w-4 mr-2" />
             {isLoading ? 'Saving...' : mode === 'create' ? 'Add Product' : 'Update Product'}
           </Button>
         </CardFooter>

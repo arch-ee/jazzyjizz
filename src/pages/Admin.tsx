@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 import { Button } from "../components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog";
 import Main from "../components/Layout/Main";
+import { Plus } from "lucide-react";
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState("products");
@@ -27,9 +28,10 @@ const Admin = () => {
               <div className="flex justify-between items-center mb-4">
                 {activeTab === "products" && (
                   <Button 
-                    className="sketchy-button font-comic-sans"
+                    className="sketchy-button font-comic-sans flex items-center"
                     onClick={() => setShowAddProductDialog(true)}
                   >
+                    <Plus className="h-4 w-4 mr-1" />
                     Add Product
                   </Button>
                 )}

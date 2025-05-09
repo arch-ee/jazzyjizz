@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Order, CartItem } from '../types';
 import { v4 as uuidv4 } from 'uuid';
@@ -7,6 +8,7 @@ type OrderContextType = {
   orders: Order[];
   addOrder: (customerInfo: { name: string; email: string; address: string }, items: CartItem[], total: number) => Order;
   updateOrderStatus: (id: string, status: Order['status']) => void;
+  deleteOrder: (id: string) => void;
   getOrder: (id: string) => Order | undefined;
 };
 
@@ -18,7 +20,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Load orders from localStorage
   useEffect(() => {
-    const savedOrders = localStorage.getItem('candy-orders');
+    const savedOrders = localStorage.getItem('orders');
     if (savedOrders) {
       try {
         // Parse the date strings back to Date objects
@@ -36,7 +38,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
   // Save orders to localStorage
   useEffect(() => {
     if (orders.length > 0) {
-      localStorage.setItem('candy-orders', JSON.stringify(orders));
+      localStorage.setItem('orders', JSON.stringify(orders));
     }
   }, [orders]);
 
@@ -72,6 +74,18 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
       description: `Order #${id.slice(0, 8)} status changed to ${status}.`,
     });
   };
+  
+  const deleteOrder = (id: string) => {
+    const orderToDelete = orders.find(order => order.id === id);
+    if (!orderToDelete) return;
+    
+    setOrders(prevOrders => prevOrders.filter(order => order.id !== id));
+    
+    toast({
+      title: "Order deleted",
+      description: `Order #${id.slice(0, 8)} has been removed.`,
+    });
+  };
 
   const getOrder = (id: string) => {
     return orders.find(order => order.id === id);
@@ -82,6 +96,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
       orders,
       addOrder,
       updateOrderStatus,
+      deleteOrder,
       getOrder,
     }}>
       {children}

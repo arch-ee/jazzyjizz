@@ -14,9 +14,6 @@ const CartSummary = ({ onCheckout }: CartSummaryProps) => {
   const currencyTotals: Record<string, number> = {};
   
   cart.forEach(item => {
-    // Add main currency (pencils)
-    const itemPencilTotal = item.product.price * item.quantity;
-    
     // Add alternative currencies
     if (item.product.currencies && item.product.currencies.length > 0) {
       item.product.currencies.forEach(currency => {
