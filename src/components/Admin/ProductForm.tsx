@@ -36,6 +36,7 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
     price: product?.price || 0,
     image: product?.image || '/placeholder.svg',
     inStock: product?.inStock !== undefined ? product.inStock : true,
+    stock: product?.stock || 0, // Added stock field
   });
 
   const [currencies, setCurrencies] = useState<Currency[]>(initialCurrencies);
@@ -46,12 +47,31 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
   };
 
   const handleStockChange = (checked: boolean) => {
-    setFormData(prev => ({ ...prev, inStock: checked }));
+    // If checked, set inStock to true and set stock to 1 if it was 0
+    // If unchecked, set inStock to false and set stock to 0
+    const newStock = checked ? (formData.stock > 0 ? formData.stock : 1) : 0;
+    setFormData(prev => ({ 
+      ...prev, 
+      inStock: checked,
+      stock: newStock
+    }));
   };
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
     setFormData(prev => ({ ...prev, price: isNaN(value) ? 0 : value }));
+  };
+  
+  const handleStockNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value);
+    const stockValue = isNaN(value) ? 0 : Math.max(0, value);
+    const isInStock = stockValue > 0;
+    
+    setFormData(prev => ({ 
+      ...prev, 
+      stock: stockValue,
+      inStock: isInStock
+    }));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,6 +98,12 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
 
   const handleCurrencyChange = (index: number, field: 'type' | 'amount', value: string | number) => {
     const updatedCurrencies = [...currencies];
+    
+    if (field === 'amount') {
+      // Round up currency amount to whole numbers
+      value = Math.ceil(Number(value));
+    }
+    
     updatedCurrencies[index] = { 
       ...updatedCurrencies[index], 
       [field]: field === 'amount' ? Number(value) : value 
@@ -94,7 +120,9 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
       const productData = {
         ...formData,
         currencies: currencies,
-        image: imagePreview || formData.image // Use the image preview if available
+        image: imagePreview || formData.image, // Use the image preview if available
+        // Make sure inStock is based on stock quantity
+        inStock: formData.stock > 0
       };
 
       if (mode === 'create') {
@@ -113,6 +141,7 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
           price: 0,
           image: '/placeholder.svg',
           inStock: true,
+          stock: 0,
         });
         setCurrencies([]);
         setImageFile(null);
@@ -172,6 +201,22 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
                 onChange={handlePriceChange}
                 min="0"
                 step="0.01"
+                required
+                className="font-comic-sans bg-white"
+              />
+            </div>
+            
+            {/* Add stock quantity input */}
+            <div className="space-y-2">
+              <Label htmlFor="stock" className="font-comic-sans">Stock Quantity</Label>
+              <Input
+                id="stock"
+                name="stock"
+                type="number"
+                value={formData.stock}
+                onChange={handleStockNumberChange}
+                min="0"
+                step="1"
                 required
                 className="font-comic-sans bg-white"
               />
@@ -271,6 +316,11 @@ const ProductForm = ({ product, onSubmit, mode }: ProductFormProps) => {
               onCheckedChange={handleStockChange}
             />
             <Label htmlFor="inStock" className="font-comic-sans">In Stock</Label>
+            <div className="text-sm text-gray-500 ml-auto">
+              {formData.inStock ? 
+                `${formData.stock} items available` : 
+                "Out of stock"}
+            </div>
           </div>
         </CardContent>
         

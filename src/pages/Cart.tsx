@@ -10,10 +10,12 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import Main from "../components/Layout/Main";
 import { Link } from "react-router-dom";
+import { useToast } from "../hooks/use-toast";
 
 const Cart = () => {
   const { cart, clearCart, subtotal } = useCart();
-  const { addOrder } = useOrders();
+  const { addOrder, hasReachedDailyLimit } = useOrders();
+  const { toast } = useToast();
   
   const [showCheckoutDialog, setShowCheckoutDialog] = useState(false);
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
@@ -33,6 +35,16 @@ const Cart = () => {
   };
   
   const handlePlaceOrder = () => {
+    // Check if customer has reached daily order limit
+    if (customerInfo.name && hasReachedDailyLimit(customerInfo.name)) {
+      toast({
+        title: "Order limit reached",
+        description: "You've reached the limit of 2 orders per day.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     const total = subtotal;
     
     // Create a simplified customer info object with just the name
@@ -43,15 +55,13 @@ const Cart = () => {
     };
     
     const order = addOrder(simplifiedCustomerInfo, cart, total);
-    if (order && order.id) {
-      setOrderId(order.id);
-    } else {
-      setOrderId("unknown"); // Fallback in case order doesn't have an id
-    }
     
-    setShowCheckoutDialog(false);
-    setShowConfirmationDialog(true);
-    clearCart();
+    if (order) {
+      setOrderId(order.id);
+      setShowCheckoutDialog(false);
+      setShowConfirmationDialog(true);
+      clearCart();
+    }
   };
   
   if (cart.length === 0) {
@@ -71,11 +81,30 @@ const Cart = () => {
       </Main>
     );
   }
+
+  // Check if any items have insufficient stock
+  const insufficientStockItems = cart.filter(item => 
+    item.quantity > (item.product.stock || 0)
+  );
   
   return (
     <Main>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8">Your Cart</h1>
+        
+        {insufficientStockItems.length > 0 && (
+          <div className="bg-red-50 border border-red-200 text-red-700 p-4 mb-6 rounded-md">
+            <h3 className="font-bold mb-2">Stock Warning</h3>
+            <p>The following items have insufficient stock:</p>
+            <ul className="list-disc list-inside mt-2">
+              {insufficientStockItems.map(item => (
+                <li key={item.id}>
+                  {item.product.name} - Requested: {item.quantity}, Available: {item.product.stock || 0}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-2">
@@ -123,6 +152,9 @@ const Cart = () => {
                   placeholder="John Doe"
                   required
                 />
+                <p className="text-xs text-gray-500">
+                  Note: Maximum 2 orders per customer per day
+                </p>
               </div>
             </div>
             
@@ -139,7 +171,7 @@ const Cart = () => {
                 type="button"
                 className="sketchy-button"
                 onClick={handlePlaceOrder}
-                disabled={!customerInfo.name}
+                disabled={!customerInfo.name || insufficientStockItems.length > 0}
               >
                 Place Order
               </Button>

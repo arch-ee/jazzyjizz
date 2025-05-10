@@ -2,6 +2,7 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { AlertTriangle } from "lucide-react";
 
 const NotFound = () => {
   const location = useLocation();
@@ -15,7 +16,10 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center p-6 bg-white rounded-lg shadow-md">
+      <div className="text-center p-6 bg-white rounded-lg shadow-md w-full max-w-md mx-auto">
+        <div className="flex justify-center mb-4">
+          <AlertTriangle size={64} className="text-red-500" />
+        </div>
         <h1 className="text-6xl font-bold text-red-500 mb-4">404</h1>
         <p className="text-xl text-gray-600 mb-6">Oops! Page not found</p>
         <p className="mb-6 text-gray-500">

@@ -84,9 +84,14 @@ const ProductList = () => {
                   )}
                 </td>
                 <td className="px-4 py-4">
-                  <span className={`px-2 py-1 rounded-full text-xs ${product.inStock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {product.inStock ? 'In Stock' : 'Out of Stock'}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className={`px-2 py-1 rounded-full text-xs mb-1 ${product.inStock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                      {product.inStock ? 'In Stock' : 'Out of Stock'}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {product.stock !== undefined ? `${product.stock} items` : 'Not tracked'}
+                    </span>
+                  </div>
                 </td>
                 <td className="px-4 py-4 text-right">
                   <div className="flex justify-end space-x-2">
@@ -197,6 +202,9 @@ const ProductList = () => {
                   }`}>
                     {viewingProduct.inStock ? 'In Stock' : 'Out of Stock'}
                   </span>
+                  <p className="mt-2 text-sm">
+                    Stock: {viewingProduct.stock !== undefined ? viewingProduct.stock : 'Not tracked'}
+                  </p>
                 </div>
                 <p className="mt-4 text-sm text-gray-500">
                   Added on: {new Date(viewingProduct.createdAt).toLocaleDateString()}

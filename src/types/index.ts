@@ -17,6 +17,7 @@ export type Product = {
   price: number;
   image: string;
   inStock: boolean;
+  stock: number; // Added stock quantity
   createdAt: Date;
   currencies?: Currency[];
 };
@@ -39,4 +40,11 @@ export type Order = {
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   total: number;
   createdAt: Date;
+};
+
+export type CustomerOrders = {
+  [customerId: string]: {
+    count: number;
+    lastOrderDate: string;
+  }
 };

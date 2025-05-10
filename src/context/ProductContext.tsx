@@ -14,6 +14,7 @@ const initialProducts: Product[] = [
     price: 2.99,
     image: "/placeholder.svg",
     inStock: true,
+    stock: 50, // Added initial stock
     createdAt: new Date(),
   },
   {
@@ -23,6 +24,7 @@ const initialProducts: Product[] = [
     price: 3.49,
     image: "/placeholder.svg",
     inStock: true,
+    stock: 40, // Added initial stock
     createdAt: new Date(),
   },
   {
@@ -32,6 +34,7 @@ const initialProducts: Product[] = [
     price: 1.99,
     image: "/placeholder.svg",
     inStock: true,
+    stock: 60, // Added initial stock
     createdAt: new Date(),
   },
 ];
@@ -42,6 +45,7 @@ type ProductContextType = {
   updateProduct: (id: string, updates: Partial<Product>) => void;
   deleteProduct: (id: string) => void;
   getProduct: (id: string) => Product | undefined;
+  updateStock: (id: string, quantityChange: number) => boolean;
 };
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -70,7 +74,9 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
             try {
               const parsedProducts = JSON.parse(savedProducts).map((product: any) => ({
                 ...product,
-                createdAt: new Date(product.createdAt)
+                createdAt: new Date(product.createdAt),
+                // Ensure stock property exists
+                stock: product.stock || 0
               }));
               
               // Initialize Firebase with saved products
@@ -116,9 +122,14 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
 
   const addProduct = (productData: Omit<Product, 'id' | 'createdAt'>) => {
     const productId = uuidv4();
+    
+    // Set inStock based on stock quantity
+    const inStock = (productData.stock || 0) > 0;
+    
     const newProduct: Product = {
       ...productData,
       id: productId,
+      inStock,
       createdAt: new Date()
     };
     
@@ -136,6 +147,11 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
 
   const updateProduct = (id: string, updates: Partial<Product>) => {
     const productRef = ref(database, `products/${id}`);
+    
+    // If stock is updated, also update inStock status
+    if (updates.stock !== undefined) {
+      updates.inStock = updates.stock > 0;
+    }
     
     // Update in Firebase
     update(productRef, {
@@ -166,6 +182,22 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
   const getProduct = (id: string) => {
     return products.find(product => product.id === id);
   };
+  
+  // New function to update stock and return success status
+  const updateStock = (id: string, quantityChange: number): boolean => {
+    const product = products.find(p => p.id === id);
+    if (!product) return false;
+    
+    // Check if enough stock is available
+    if (product.stock + quantityChange < 0) return false;
+    
+    // Update stock
+    const newStock = product.stock + quantityChange;
+    const inStock = newStock > 0;
+    
+    updateProduct(id, { stock: newStock, inStock });
+    return true;
+  };
 
   return (
     <ProductContext.Provider value={{
@@ -174,6 +206,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
       updateProduct,
       deleteProduct,
       getProduct,
+      updateStock,
     }}>
       {children}
     </ProductContext.Provider>

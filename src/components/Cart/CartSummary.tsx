@@ -10,6 +10,9 @@ interface CartSummaryProps {
 const CartSummary = ({ onCheckout }: CartSummaryProps) => {
   const { subtotal, totalItems, cart } = useCart();
   
+  // Round up pencil values
+  const roundedSubtotal = Math.ceil(subtotal);
+  
   // Calculate totals for all currencies
   const currencyTotals: Record<string, number> = {};
   
@@ -26,6 +29,11 @@ const CartSummary = ({ onCheckout }: CartSummaryProps) => {
       });
     }
   });
+  
+  // Round up all currency values
+  Object.keys(currencyTotals).forEach(key => {
+    currencyTotals[key] = Math.ceil(currencyTotals[key]);
+  });
 
   return (
     <div className="bg-gray-50 rounded-lg p-6">
@@ -41,23 +49,29 @@ const CartSummary = ({ onCheckout }: CartSummaryProps) => {
         {Object.entries(currencyTotals).map(([type, amount]) => (
           <div className="flex justify-between" key={type}>
             <span className="text-gray-600">{type}</span>
-            <span>{amount.toFixed(2)}</span>
+            <span>{amount.toFixed(0)}</span>
           </div>
         ))}
         
         <div className="border-t pt-2 mt-2">
           <div className="flex justify-between font-semibold text-lg">
             <span>Total</span>
-            <span>{subtotal.toFixed(2)} pencils</span>
+            <span>{roundedSubtotal.toFixed(0)} pencils</span>
           </div>
           
           {/* Display all other currency totals */}
           {Object.entries(currencyTotals).map(([type, amount]) => (
             <div className="flex justify-between text-sm" key={`total-${type}`}>
               <span></span>
-              <span>+ {amount.toFixed(2)} {type}</span>
+              <span>{amount.toFixed(0)} {type}</span>
             </div>
           ))}
+          
+          {subtotal !== roundedSubtotal && (
+            <div className="text-xs text-gray-500 text-right mt-1">
+              *Pencils rounded up from {subtotal.toFixed(2)}
+            </div>
+          )}
         </div>
       </div>
       

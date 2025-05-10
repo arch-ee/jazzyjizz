@@ -3,36 +3,63 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Redirecting...</title>
+  <title>Jazzy Jizz Products</title>
   <script type="text/javascript">
     // Single Page Apps for GitHub Pages
     // MIT License
     // https://github.com/rafgraph/spa-github-pages
-    
+    // This script takes the current URL and converts the path and query
+    // parameters into a format that the SPA router can handle.
     (function() {
-      // This works for all hosting platforms by using relative paths
-      var pathSegmentsToKeep = 1; // Keep /jazzyjizz/ part
+      var pathSegmentsToKeep = 1;
       var l = window.location;
       
-      // Get the base URL for the site
-      var baseUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + 
-                    l.pathname.split('/').slice(0, pathSegmentsToKeep + 1).join('/') + '/';
-      
-      // Redirect to index with a special query parameter
-      window.location.href = baseUrl + 
-        '?p=/' +
+      var redirectUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, pathSegmentsToKeep + 1).join('/') + '/?/' +
         l.pathname
           .slice(1)
           .split('/')
           .slice(pathSegmentsToKeep)
-          .join('/').replace(/&/g, '~and~') +
+          .join('/')
+          .replace(/&/g, '~and~') +
         (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
         l.hash;
+
+      window.location.replace(redirectUrl);
     })();
   </script>
+  <style>
+    body {
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+      text-align: center;
+    }
+    .container {
+      padding: 2rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+    }
+    h1 { color: #ff6b6b; }
+    p { margin: 1rem 0; }
+    a { 
+      color: #4dabf7; 
+      text-decoration: none; 
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <h1>Redirecting...</h1>
-  <p>If you are not redirected automatically, <a href="/">click here</a>.</p>
+  <div class="container">
+    <h1>Redirecting...</h1>
+    <p>If you are not redirected automatically, <a href="/">click here</a> to go to the homepage.</p>
+  </div>
 </body>
 </html>
