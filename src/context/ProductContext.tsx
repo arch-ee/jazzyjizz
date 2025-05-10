@@ -3,6 +3,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product } from '../types';
 import { useToast } from '../hooks/use-toast';
 import { v4 as uuidv4 } from 'uuid';
+import { database } from '../firebase/config';
+import { ref, onValue, set, remove, update } from 'firebase/database';
 
 const initialProducts: Product[] = [
   {
@@ -47,28 +49,65 @@ const ProductContext = createContext<ProductContextType | undefined>(undefined);
 export const ProductProvider = ({ children }: { children: React.ReactNode }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const { toast } = useToast();
+  const productsRef = ref(database, 'products');
 
-  // Load products from localStorage or use initial data
+  // Initialize Firebase with data from localStorage if Firebase is empty
   useEffect(() => {
-    const savedProducts = localStorage.getItem('products');
-    if (savedProducts) {
-      try {
-        // Parse the date strings back to Date objects
-        const parsedProducts = JSON.parse(savedProducts).map((product: any) => ({
+    const loadInitialData = async () => {
+      // Listen for changes in Firebase
+      onValue(productsRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          const productsArray = Object.values(data).map((product: any) => ({
+            ...product,
+            createdAt: new Date(product.createdAt)
+          }));
+          setProducts(productsArray as Product[]);
+        } else {
+          // If no data in Firebase, load from localStorage or use initial data
+          const savedProducts = localStorage.getItem('products');
+          if (savedProducts) {
+            try {
+              const parsedProducts = JSON.parse(savedProducts).map((product: any) => ({
+                ...product,
+                createdAt: new Date(product.createdAt)
+              }));
+              
+              // Initialize Firebase with saved products
+              parsedProducts.forEach((product: Product) => {
+                set(ref(database, `products/${product.id}`), {
+                  ...product,
+                  createdAt: product.createdAt.toISOString()
+                });
+              });
+              
+              setProducts(parsedProducts);
+            } catch (error) {
+              console.error('Failed to parse saved products', error);
+              initializeWithDefaultProducts();
+            }
+          } else {
+            initializeWithDefaultProducts();
+          }
+        }
+      });
+    };
+
+    const initializeWithDefaultProducts = () => {
+      // Initialize with default products
+      initialProducts.forEach(product => {
+        set(ref(database, `products/${product.id}`), {
           ...product,
-          createdAt: new Date(product.createdAt)
-        }));
-        setProducts(parsedProducts);
-      } catch (error) {
-        console.error('Failed to parse saved products', error);
-        setProducts(initialProducts);
-      }
-    } else {
+          createdAt: product.createdAt.toISOString()
+        });
+      });
       setProducts(initialProducts);
-    }
+    };
+
+    loadInitialData();
   }, []);
 
-  // Save products to localStorage
+  // Save products to localStorage as a backup
   useEffect(() => {
     if (products.length > 0) {
       localStorage.setItem('products', JSON.stringify(products));
@@ -76,13 +115,18 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
   }, [products]);
 
   const addProduct = (productData: Omit<Product, 'id' | 'createdAt'>) => {
+    const productId = uuidv4();
     const newProduct: Product = {
       ...productData,
-      id: uuidv4(),
+      id: productId,
       createdAt: new Date()
     };
     
-    setProducts(prevProducts => [...prevProducts, newProduct]);
+    // Add to Firebase
+    set(ref(database, `products/${productId}`), {
+      ...newProduct,
+      createdAt: newProduct.createdAt.toISOString()
+    });
     
     toast({
       title: "Product added",
@@ -91,11 +135,13 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
   };
 
   const updateProduct = (id: string, updates: Partial<Product>) => {
-    setProducts(prevProducts => 
-      prevProducts.map(product => 
-        product.id === id ? { ...product, ...updates } : product
-      )
-    );
+    const productRef = ref(database, `products/${id}`);
+    
+    // Update in Firebase
+    update(productRef, {
+      ...updates,
+      createdAt: updates.createdAt ? updates.createdAt.toISOString() : undefined
+    });
     
     toast({
       title: "Product updated",
@@ -106,7 +152,8 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
   const deleteProduct = (id: string) => {
     const productToDelete = products.find(p => p.id === id);
     
-    setProducts(prevProducts => prevProducts.filter(product => product.id !== id));
+    // Delete from Firebase
+    remove(ref(database, `products/${id}`));
     
     if (productToDelete) {
       toast({

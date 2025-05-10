@@ -1,3 +1,4 @@
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -10,7 +11,7 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   // Use correct base path for GitHub Pages
-  base: mode === 'production' ? '/jazzyjizz/' : '/',
+  base: '/jazzyjizz/',
   plugins: [
     react(),
     mode === 'development' && componentTagger(),
@@ -27,7 +28,7 @@ export default defineConfig(({ mode }) => ({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true,
+        drop_console: mode === 'production',
       },
     },
   },

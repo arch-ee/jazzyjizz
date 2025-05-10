@@ -1,3 +1,4 @@
+
 name: Deploy to GitHub Pages
 
 on:
@@ -21,24 +22,27 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install terser
+        run: npm install terser --save-dev
+
       - name: Build the app
         run: npm run build
 
-      - name: Upload to GitHub Pages Artifact
-        uses: actions/upload-artifact@v2
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
         with:
-          name: build
-          path: ./dist  # Ensure this path matches your build output
+          path: ./dist
 
   deploy:
     needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifact_name: build  # Make sure this matches the artifact name from upload
-          timeout: 60000
-          error_count: 10
-          reporting_interval: 5000
+        id: deployment
+        uses: actions/deploy-pages@v2

@@ -6,11 +6,31 @@
   <title>Redirecting...</title>
   <script type="text/javascript">
     // Single Page Apps for GitHub Pages
-    // Redirect from 404.html to the main page with path preserved
+    // MIT License
+    // https://github.com/rafgraph/spa-github-pages
+    
+    // This script takes the current URL and converts it
+    // to an equivalent URL on the current site with a hash
+    // allowing for proper SPA routing on GitHub Pages
+    
     (function() {
-      var path = window.location.pathname;
-      var pathToRedirect = path.indexOf('/') === 0 ? path : '/' + path;
-      window.location.href = window.location.origin + '/#' + pathToRedirect;
+      var segmentCount = 1;
+      var location = window.location;
+      var baseURL = location.protocol + '//' + location.hostname + 
+                    (location.port ? ':' + location.port : '') +
+                    location.pathname.split('/').slice(0, 1 + segmentCount).join('/') + '/';
+      
+      location.replace(
+        baseURL +
+        '?p=/' +
+        location.pathname
+          .slice(1)
+          .split('/')
+          .slice(segmentCount)
+          .join('/').replace(/&/g, '~and~') +
+        (location.search ? '&' + location.search.slice(1).replace(/&/g, '~and~') : '') +
+        location.hash
+      );
     })();
   </script>
 </head>
