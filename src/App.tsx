@@ -19,6 +19,9 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Get the base URL from the environment or default to '/jazzyjizz'
+const basePath = import.meta.env.BASE_URL || '/jazzyjizz';
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -28,7 +31,7 @@ const App = () => (
             <TooltipProvider>
               <Toaster />
               <Sonner />
-              <BrowserRouter>
+              <BrowserRouter basename={basePath}>
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/about" element={<About />} />
