@@ -20,7 +20,8 @@
                     (location.port ? ':' + location.port : '') +
                     location.pathname.split('/').slice(0, 1 + segmentCount).join('/') + '/';
       
-      location.replace(
+      // Redirect to index with a special query parameter
+      window.location.replace(
         baseURL +
         '?p=/' +
         location.pathname
