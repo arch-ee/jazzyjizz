@@ -24,11 +24,17 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    sourcemap: false,
+    sourcemap: true,
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: mode === 'production',
+        drop_console: false, // Keep console logs for debugging
+      },
+    },
+    // Add these settings to make sure asset paths are correct
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
       },
     },
   },

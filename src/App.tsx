@@ -19,8 +19,8 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Get the base URL from the environment or default to '/jazzyjizz'
-const basePath = import.meta.env.BASE_URL || '/jazzyjizz';
+// Get the base URL from the environment or default to '/'
+const basePath = import.meta.env.BASE_URL || '/';
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
