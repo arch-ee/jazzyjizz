@@ -1,9 +1,8 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ProductProvider } from "./context/ProductContext";
 import { CartProvider } from "./context/CartContext";
@@ -28,7 +27,7 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  console.log("App rendering, using HashRouter for better GitHub Pages compatibility");
+  console.log("App rendering with BrowserRouter");
   
   return (
     <QueryClientProvider client={queryClient}>
@@ -39,8 +38,7 @@ const App = () => {
               <TooltipProvider>
                 <Toaster />
                 <Sonner />
-                {/* Using HashRouter instead of BrowserRouter for GitHub Pages */}
-                <HashRouter>
+                <BrowserRouter>
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/about" element={<About />} />
@@ -49,7 +47,7 @@ const App = () => {
                     <Route path="/cart" element={<Cart />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
-                </HashRouter>
+                </BrowserRouter>
               </TooltipProvider>
             </OrderProvider>
           </CartProvider>

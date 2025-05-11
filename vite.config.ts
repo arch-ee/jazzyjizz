@@ -1,17 +1,14 @@
-
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
   },
-  // Use correct base path for GitHub Pages
-  base: mode === 'production' ? '/jazzyjizz/' : '/',
+  base: "/",
   plugins: [
     react(),
     mode === 'development' && componentTagger(),
@@ -28,10 +25,9 @@ export default defineConfig(({ mode }) => ({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: false, // Keep console logs for debugging
+        drop_console: false,
       },
     },
-    // Add these settings to make sure asset paths are correct
     rollupOptions: {
       output: {
         manualChunks: undefined,
