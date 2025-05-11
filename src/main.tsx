@@ -14,6 +14,11 @@ if (!rootElement) {
 // Create root with modern React 18 API
 const root = createRoot(document.getElementById("root")!);
 
+// Debug the current path to help with routing issues
+console.log("Current path:", window.location.pathname);
+console.log("Current search:", window.location.search);
+console.log("Current hash:", window.location.hash);
+
 // Wrap app render in error boundary
 try {
   console.log("Starting app render...");

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product } from '../types';
 import { useToast } from '../hooks/use-toast';
@@ -40,23 +39,28 @@ const initialProducts: Product[] = [
 
 type ProductContextType = {
   products: Product[];
+  loading: boolean; // Add loading state
   addProduct: (product: Omit<Product, 'id' | 'createdAt'>) => void;
   updateProduct: (id: string, updates: Partial<Product>) => void;
   deleteProduct: (id: string) => void;
   getProduct: (id: string) => Product | undefined;
-  updateStock: (id: string, quantityChange: number) => Promise<boolean>; // Updated return type to Promise<boolean>
+  updateStock: (id: string, quantityChange: number) => Promise<boolean>;
 };
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
 export const ProductProvider = ({ children }: { children: React.ReactNode }) => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true); // Add loading state
   const { toast } = useToast();
   
   // Initialize with Supabase data
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        console.log("Fetching products from Supabase...");
+        setLoading(true);
+        
         const { data, error } = await supabase
           .from('products')
           .select(`
@@ -72,6 +76,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
         }
 
         if (data && data.length > 0) {
+          console.log("Products fetched successfully:", data.length);
           // Transform Supabase data to match our Product type
           const transformedProducts: Product[] = data.map((item: any) => ({
             id: item.id,
@@ -90,12 +95,15 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
           
           setProducts(transformedProducts);
         } else {
+          console.log("No products found, initializing with sample data");
           // If no products in Supabase, initialize with sample data
-          setInitialProducts();
+          await setInitialProducts();
         }
       } catch (error) {
         console.error('Failed to fetch products:', error);
         setProducts(initialProducts);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -412,6 +420,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
   return (
     <ProductContext.Provider value={{
       products,
+      loading,
       addProduct,
       updateProduct,
       deleteProduct,
