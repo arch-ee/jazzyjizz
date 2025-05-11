@@ -20,6 +20,7 @@ const Cart = () => {
   const [showCheckoutDialog, setShowCheckoutDialog] = useState(false);
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
   const [orderId, setOrderId] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
@@ -34,7 +35,7 @@ const Cart = () => {
     setShowCheckoutDialog(true);
   };
   
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     // Check if customer has reached daily order limit
     if (customerInfo.name && hasReachedDailyLimit(customerInfo.name)) {
       toast({
@@ -45,6 +46,7 @@ const Cart = () => {
       return;
     }
     
+    setIsProcessing(true);
     const total = subtotal;
     
     // Create a simplified customer info object with just the name
@@ -54,13 +56,25 @@ const Cart = () => {
       address: "", // Empty string as we're removing this field
     };
     
-    const order = addOrder(simplifiedCustomerInfo, cart, total);
-    
-    if (order) {
-      setOrderId(order.id);
-      setShowCheckoutDialog(false);
-      setShowConfirmationDialog(true);
-      clearCart();
+    // Place the order with async stock updates
+    try {
+      const order = addOrder(simplifiedCustomerInfo, cart, total);
+      
+      if (order) {
+        setOrderId(order.id);
+        setShowCheckoutDialog(false);
+        setShowConfirmationDialog(true);
+        clearCart();
+      }
+    } catch (error) {
+      console.error("Error placing order:", error);
+      toast({
+        title: "Order Failed",
+        description: "There was an error processing your order.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsProcessing(false);
     }
   };
   
@@ -164,6 +178,7 @@ const Cart = () => {
                 variant="outline"
                 onClick={() => setShowCheckoutDialog(false)}
                 className="mr-2"
+                disabled={isProcessing}
               >
                 Cancel
               </Button>
@@ -171,9 +186,9 @@ const Cart = () => {
                 type="button"
                 className="sketchy-button"
                 onClick={handlePlaceOrder}
-                disabled={!customerInfo.name || insufficientStockItems.length > 0}
+                disabled={!customerInfo.name || insufficientStockItems.length > 0 || isProcessing}
               >
-                Place Order
+                {isProcessing ? "Processing..." : "Place Order"}
               </Button>
             </DialogFooter>
           </DialogContent>

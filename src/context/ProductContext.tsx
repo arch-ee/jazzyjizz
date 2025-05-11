@@ -44,7 +44,7 @@ type ProductContextType = {
   updateProduct: (id: string, updates: Partial<Product>) => void;
   deleteProduct: (id: string) => void;
   getProduct: (id: string) => Product | undefined;
-  updateStock: (id: string, quantityChange: number) => boolean;
+  updateStock: (id: string, quantityChange: number) => Promise<boolean>; // Updated return type to Promise<boolean>
 };
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
