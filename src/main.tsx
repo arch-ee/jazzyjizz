@@ -18,6 +18,8 @@ const root = createRoot(document.getElementById("root")!);
 console.log("Current path:", window.location.pathname);
 console.log("Current search:", window.location.search);
 console.log("Current hash:", window.location.hash);
+console.log("Base URL:", import.meta.env.BASE_URL);
+console.log("Full URL:", window.location.href);
 
 // Wrap app render in error boundary
 try {
