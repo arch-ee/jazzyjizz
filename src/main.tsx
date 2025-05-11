@@ -16,11 +16,13 @@ const root = createRoot(document.getElementById("root")!);
 
 // Wrap app render in error boundary
 try {
+  console.log("Starting app render...");
   root.render(
     <React.StrictMode>
       <App />
     </React.StrictMode>
   );
+  console.log("App rendered successfully");
 } catch (error) {
   console.error("Error rendering app:", error);
   
@@ -33,7 +35,21 @@ try {
     }}>
       <h1>Something went wrong</h1>
       <p>Please try refreshing the page.</p>
-      <button onClick={() => window.location.reload()}>
+      <p style={{ color: 'red', marginTop: '10px' }}>
+        Error: {error instanceof Error ? error.message : String(error)}
+      </p>
+      <button 
+        onClick={() => window.location.reload()}
+        style={{
+          padding: '10px 20px',
+          background: '#4dabf7',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          marginTop: '20px'
+        }}
+      >
         Refresh Page
       </button>
     </div>

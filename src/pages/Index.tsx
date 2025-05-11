@@ -2,9 +2,15 @@
 import ProductGrid from "../components/Products/ProductGrid";
 import { useProducts } from "../context/ProductContext";
 import Main from "../components/Layout/Main";
+import { useEffect } from "react";
 
 const Index = () => {
   const { products } = useProducts();
+  
+  useEffect(() => {
+    // Log to help debug rendering issues
+    console.log("Index page rendering with", products.length, "products");
+  }, [products]);
 
   return (
     <Main>
