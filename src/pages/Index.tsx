@@ -4,23 +4,37 @@ import { useProducts } from "../context/ProductContext";
 import Main from "../components/Layout/Main";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
   const { products, loading } = useProducts();
   const [hasError, setHasError] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   
   useEffect(() => {
     // Log to help debug rendering issues
-    console.log("Index page rendering with", products.length, "products");
-    console.log("Loading state:", loading);
+    console.log(`Index page rendering with ${products.length} products, loading: ${loading}, hasError: ${hasError}`);
     
     // Set timeout to detect if products don't load within 10 seconds
     const timer = setTimeout(() => {
       if (loading && products.length === 0) {
         console.error("Products failed to load within timeout period");
-        setHasError(true);
+        
+        if (retryCount < 2) {
+          console.log("Automatically retrying...");
+          setRetryCount(prevCount => prevCount + 1);
+          window.location.reload();
+        } else {
+          setHasError(true);
+          toast({
+            title: "Loading Error",
+            description: "We're having trouble loading products. Please try again later.",
+            variant: "destructive",
+          });
+        }
       }
     }, 10000);
     
@@ -28,18 +42,20 @@ const Index = () => {
     setIsLoaded(true);
     
     return () => clearTimeout(timer);
-  }, [products, loading]);
+  }, [products, loading, retryCount]);
 
-  // Force a re-render if stuck in loading state
+  // Show data when products are loaded
   useEffect(() => {
-    if (isLoaded && loading && products.length === 0) {
-      const forceRefresh = setTimeout(() => {
-        window.location.reload();
-      }, 15000);
-      
-      return () => clearTimeout(forceRefresh);
+    if (products.length > 0) {
+      console.log("Products loaded successfully:", products.length, "items");
     }
-  }, [isLoaded, loading, products]);
+  }, [products]);
+
+  const handleRetry = () => {
+    setHasError(false);
+    setRetryCount(0);
+    window.location.reload();
+  };
 
   // Handle errors
   if (hasError) {
@@ -49,13 +65,35 @@ const Index = () => {
           <div className="flex flex-col items-center justify-center h-64 text-center">
             <AlertCircle size={48} className="text-red-500 mb-4" />
             <h2 className="text-xl font-bold mb-2">Error Loading Products</h2>
-            <p className="mb-4">We're having trouble loading the product data.</p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+            <p className="mb-4">We're having trouble connecting to our product database.</p>
+            <Button 
+              onClick={handleRetry}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center"
             >
+              <RefreshCw size={16} className="mr-2" />
               Try Again
-            </button>
+            </Button>
+          </div>
+        </div>
+      </Main>
+    );
+  }
+
+  // Fallback for empty products but not in loading state
+  if (!loading && products.length === 0) {
+    return (
+      <Main>
+        <div className="container mx-auto px-2 py-4">
+          <div className="flex flex-col items-center justify-center h-64 text-center">
+            <h2 className="text-xl font-bold mb-2">No Products Found</h2>
+            <p className="mb-4">It looks like our product catalog is empty right now.</p>
+            <Button 
+              onClick={handleRetry}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center"
+            >
+              <RefreshCw size={16} className="mr-2" />
+              Refresh
+            </Button>
           </div>
         </div>
       </Main>

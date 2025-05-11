@@ -10,8 +10,8 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
-  // Use correct base path for GitHub Pages - no trailing slash
-  base: '/jazzyjizz',
+  // Use correct base path for GitHub Pages
+  base: mode === 'production' ? '/jazzyjizz/' : '/',
   plugins: [
     react(),
     mode === 'development' && componentTagger(),

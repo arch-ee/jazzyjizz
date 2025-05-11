@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ProductProvider } from "./context/ProductContext";
 import { CartProvider } from "./context/CartContext";
@@ -20,17 +20,15 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 1,
+      retry: 3,
       refetchOnWindowFocus: false,
+      staleTime: 10000,
     },
   },
 });
 
-// Hard-code the base path
-const basePath = "/jazzyjizz";
-
 const App = () => {
-  console.log("App rendering with basePath:", basePath);
+  console.log("App rendering, using HashRouter for better GitHub Pages compatibility");
   
   return (
     <QueryClientProvider client={queryClient}>
@@ -41,7 +39,8 @@ const App = () => {
               <TooltipProvider>
                 <Toaster />
                 <Sonner />
-                <BrowserRouter basename={basePath}>
+                {/* Using HashRouter instead of BrowserRouter for GitHub Pages */}
+                <HashRouter>
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/about" element={<About />} />
@@ -50,7 +49,7 @@ const App = () => {
                     <Route path="/cart" element={<Cart />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
-                </BrowserRouter>
+                </HashRouter>
               </TooltipProvider>
             </OrderProvider>
           </CartProvider>

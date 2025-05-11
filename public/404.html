@@ -8,29 +8,18 @@
     // Single Page Apps for GitHub Pages
     // MIT License
     // https://github.com/rafgraph/spa-github-pages
-    // This script takes the current URL and converts the path and query
-    // parameters into a format that the SPA router can handle.
-    (function() {
-      // Single Page Apps for GitHub Pages
-      var pathSegmentsToKeep = 1;
-      var l = window.location;
-      // Remove trailing slash from basePath if present
-      var basePath = '/jazzyjizz';
-      
-      var redirectUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-        basePath + '?/' +
-        l.pathname
-          .slice(basePath.length)
-          .split('/')
-          .slice(1)
-          .join('/')
-          .replace(/&/g, '~and~') +
-        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-        l.hash;
-      
-      console.log('404 Redirect to:', redirectUrl);
-      window.location.replace(redirectUrl);
-    })();
+    var segmentCount = 1;
+    var l = window.location;
+    
+    // Log the redirection for debugging
+    console.log('404 page loaded, redirecting from:', l.pathname);
+    
+    // Simplified redirect to the hash router version
+    var redirectUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + 
+      '/jazzyjizz/#' + l.pathname.slice('/jazzyjizz'.length);
+    
+    console.log('Redirecting to:', redirectUrl);
+    window.location.replace(redirectUrl);
   </script>
   <style>
     body {
