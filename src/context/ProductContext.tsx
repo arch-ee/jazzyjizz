@@ -39,7 +39,7 @@ const initialProducts: Product[] = [
 
 type ProductContextType = {
   products: Product[];
-  loading: boolean; // Add loading state
+  loading: boolean;
   addProduct: (product: Omit<Product, 'id' | 'createdAt'>) => void;
   updateProduct: (id: string, updates: Partial<Product>) => void;
   deleteProduct: (id: string) => void;
@@ -50,15 +50,13 @@ type ProductContextType = {
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
 export const ProductProvider = ({ children }: { children: React.ReactNode }) => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  
-  // Initialize with Supabase data
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        console.log("Fetching products from Supabase...");
         setLoading(true);
         
         const { data, error } = await supabase
@@ -76,16 +74,14 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
         }
 
         if (data && data.length > 0) {
-          console.log("Products fetched successfully:", data.length);
-          // Transform Supabase data to match our Product type
           const transformedProducts: Product[] = data.map((item: any) => ({
             id: item.id,
             name: item.name,
             description: item.description,
             price: item.price,
-            image: item.image,
+            image: item.image || '/placeholder.svg',
             inStock: item.instock,
-            stock: item.stock,
+            stock: item.stock || 0,
             createdAt: new Date(item.created_at),
             currencies: item.currencies ? item.currencies.map((c: any) => ({
               type: c.type,
@@ -94,63 +90,13 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
           }));
           
           setProducts(transformedProducts);
-        } else {
-          console.log("No products found, initializing with sample data");
-          // If no products in Supabase, initialize with sample data
-          await setInitialProducts();
         }
       } catch (error) {
         console.error('Failed to fetch products:', error);
+        // Fallback to initial products if there's an error
         setProducts(initialProducts);
       } finally {
         setLoading(false);
-      }
-    };
-
-    const setInitialProducts = async () => {
-      // Add initial products to Supabase if empty
-      for (const product of initialProducts) {
-        try {
-          const { data, error } = await supabase
-            .from('products')
-            .insert({
-              name: product.name,
-              description: product.description,
-              price: product.price,
-              image: product.image,
-              instock: product.inStock,
-              stock: product.stock
-            })
-            .select();
-
-          if (error) {
-            console.error('Failed to add initial product:', error);
-          }
-        } catch (error) {
-          console.error('Error adding initial product:', error);
-        }
-      }
-
-      // Fetch after adding
-      const { data } = await supabase.from('products').select('*, currencies(*)');
-      
-      if (data) {
-        const transformedProducts: Product[] = data.map((item: any) => ({
-          id: item.id,
-          name: item.name,
-          description: item.description,
-          price: item.price,
-          image: item.image,
-          inStock: item.instock,
-          stock: item.stock,
-          createdAt: new Date(item.created_at),
-          currencies: item.currencies ? item.currencies.map((c: any) => ({
-            type: c.type,
-            amount: c.amount
-          })) : []
-        }));
-        
-        setProducts(transformedProducts);
       }
     };
 
@@ -174,9 +120,9 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
               name: item.name,
               description: item.description,
               price: item.price,
-              image: item.image,
+              image: item.image || '/placeholder.svg',
               inStock: item.instock,
-              stock: item.stock,
+              stock: item.stock || 0,
               createdAt: new Date(item.created_at),
               currencies: item.currencies ? item.currencies.map((c: any) => ({
                 type: c.type,
@@ -185,23 +131,6 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
             }));
             
             setProducts(transformedProducts);
-            
-            if (payload.eventType === 'INSERT') {
-              toast({
-                title: "Product added",
-                description: "A new product has been added to the inventory.",
-              });
-            } else if (payload.eventType === 'UPDATE') {
-              toast({
-                title: "Product updated",
-                description: "A product has been updated in the inventory.",
-              });
-            } else if (payload.eventType === 'DELETE') {
-              toast({
-                title: "Product deleted",
-                description: "A product has been removed from the inventory.",
-              });
-            }
           }
         }
       )
@@ -210,14 +139,12 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [toast]);
+  }, []);
 
   const addProduct = async (productData: Omit<Product, 'id' | 'createdAt'>) => {
-    // Set inStock based on stock quantity
     const inStock = (productData.stock || 0) > 0;
     
     try {
-      // Add to Supabase
       const { data, error } = await supabase
         .from('products')
         .insert({
@@ -241,7 +168,6 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
         return;
       }
 
-      // Add currencies if provided
       if (productData.currencies && productData.currencies.length > 0) {
         const currencyPromises = productData.currencies.map(async (currency) => {
           return supabase
@@ -273,7 +199,6 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
 
   const updateProduct = async (id: string, updates: Partial<Product>) => {
     try {
-      // If stock is updated, also update inStock status
       const supabaseUpdates: any = {};
       
       if (updates.name !== undefined) supabaseUpdates.name = updates.name;
@@ -288,7 +213,6 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
         supabaseUpdates.instock = updates.inStock;
       }
 
-      // Update in Supabase
       const { error } = await supabase
         .from('products')
         .update(supabaseUpdates)
@@ -304,15 +228,12 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
         return;
       }
 
-      // Update currencies if provided
       if (updates.currencies) {
-        // First, delete existing currencies
         await supabase
           .from('currencies')
           .delete()
           .eq('product_id', id);
 
-        // Then add new currencies
         if (updates.currencies.length > 0) {
           const currencyInserts = updates.currencies.map(currency => ({
             product_id: id,
@@ -384,24 +305,19 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     return products.find(product => product.id === id);
   };
   
-  // Update stock and return success status
   const updateStock = async (id: string, quantityChange: number): Promise<boolean> => {
     const product = products.find(p => p.id === id);
     if (!product) return false;
     
-    // Check if enough stock is available
-    if (product.stock + quantityChange < 0) return false;
-    
-    // Update stock
     const newStock = product.stock + quantityChange;
-    const inStock = newStock > 0;
+    if (newStock < 0) return false;
     
     try {
       const { error } = await supabase
         .from('products')
         .update({ 
           stock: newStock,
-          instock: inStock 
+          instock: newStock > 0 
         })
         .eq('id', id);
 
