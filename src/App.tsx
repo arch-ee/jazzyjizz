@@ -14,6 +14,7 @@ import About from "./pages/About";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import Cart from "./pages/Cart";
+import Orders from "./pages/Orders";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -27,8 +28,6 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  console.log("App rendering with BrowserRouter");
-  
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -45,6 +44,7 @@ const App = () => {
                     <Route path="/login" element={<Login />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/cart" element={<Cart />} />
+                    <Route path="/orders" element={<Orders />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </BrowserRouter>

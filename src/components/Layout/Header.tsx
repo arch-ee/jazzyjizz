@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import { Button } from "../../components/ui/button";
-import { ShoppingBag, Menu, X, Settings } from "lucide-react";
+import { ShoppingBag, Menu, X, Settings, Package } from "lucide-react";
 
 const Header = () => {
   const { totalItems } = useCart();
@@ -23,6 +22,17 @@ const Header = () => {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center space-x-2">
+          <Link to="/orders">
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="sketchy-button"
+            >
+              <Package size={16} className="mr-1" />
+              Orders
+            </Button>
+          </Link>
+
           <Link to="/admin">
             <Button 
               variant="outline" 
@@ -89,6 +99,15 @@ const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-[#c0c0c0] border-t border-[#808080] py-2">
           <div className="container mx-auto px-4 flex flex-col space-y-2">
+            <Link
+              to="/orders"
+              className="text-[#333] py-1 flex items-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <Package size={16} className="mr-1" />
+              Orders
+            </Link>
+
             <Link
               to="/admin"
               className="text-[#333] py-1 flex items-center"
