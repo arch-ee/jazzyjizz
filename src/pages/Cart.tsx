@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useOrders } from "../context/OrderContext";
@@ -14,7 +13,7 @@ import { useToast } from "../hooks/use-toast";
 
 const Cart = () => {
   const { cart, clearCart, subtotal } = useCart();
-  const { addOrder, hasReachedDailyLimit } = useOrders();
+  const { addOrder } = useOrders();
   const { toast } = useToast();
   
   const [showCheckoutDialog, setShowCheckoutDialog] = useState(false);
@@ -24,6 +23,8 @@ const Cart = () => {
   
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
+    email: "",
+    address: ""
   });
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,29 +37,19 @@ const Cart = () => {
   };
   
   const handlePlaceOrder = async () => {
-    // Check if customer has reached daily order limit
-    if (customerInfo.name && hasReachedDailyLimit(customerInfo.name)) {
+    if (!customerInfo.name) {
       toast({
-        title: "Order limit reached",
-        description: "You've reached the limit of 2 orders per day.",
+        title: "Error",
+        description: "Please enter your name",
         variant: "destructive"
       });
       return;
     }
     
     setIsProcessing(true);
-    const total = subtotal;
     
-    // Create a simplified customer info object with just the name
-    const simplifiedCustomerInfo = {
-      name: customerInfo.name,
-      email: "", // Empty string as we're removing this field
-      address: "", // Empty string as we're removing this field
-    };
-    
-    // Place the order with async stock updates
     try {
-      const order = addOrder(simplifiedCustomerInfo, cart, total);
+      const order = await addOrder(customerInfo, cart, subtotal);
       
       if (order) {
         setOrderId(order.id);
@@ -69,8 +60,8 @@ const Cart = () => {
     } catch (error) {
       console.error("Error placing order:", error);
       toast({
-        title: "Order Failed",
-        description: "There was an error processing your order.",
+        title: "Error",
+        description: "Failed to place order. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -151,7 +142,7 @@ const Cart = () => {
             <DialogHeader>
               <DialogTitle>Complete Your Order</DialogTitle>
               <DialogDescription>
-                Please provide your name to complete your order.
+                Please provide your information to complete your order.
               </DialogDescription>
             </DialogHeader>
             
@@ -166,9 +157,29 @@ const Cart = () => {
                   placeholder="John Doe"
                   required
                 />
-                <p className="text-xs text-gray-500">
-                  Note: Maximum 2 orders per customer per day
-                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={customerInfo.email}
+                  onChange={handleInputChange}
+                  placeholder="john@example.com"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="address">Shipping Address</Label>
+                <Input
+                  id="address"
+                  name="address"
+                  value={customerInfo.address}
+                  onChange={handleInputChange}
+                  placeholder="123 Main St, City, Country"
+                />
               </div>
             </div>
             
