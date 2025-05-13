@@ -10,33 +10,9 @@ const Header = () => {
   const { totalItems } = useCart();
   const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [faviconUrl, setFaviconUrl] = useState("/favicon.ico");
 
-  useEffect(() => {
-    const fetchFavicon = async () => {
-      try {
-        const { data, error } = await supabase.storage
-          .from('assets')
-          .download('favicon.ico');
-          
-        if (error) {
-          console.error('Error fetching favicon:', error);
-          return;
-        }
-
-        const url = URL.createObjectURL(data);
-        setFaviconUrl(url);
-        
-        // Update favicon
-        const favicon = document.querySelector("link[rel*='icon']") as HTMLLinkElement;
-        favicon.href = url;
-      } catch (error) {
-        console.error('Error setting favicon:', error);
-      }
-    };
-
-    fetchFavicon();
-  }, []);
+  // Remove the favicon fetching logic since we're using the default favicon
+  // This prevents unnecessary storage bucket errors
 
   return (
     <header className="bg-[#c0c0c0] border-b border-[#808080]">
