@@ -147,3 +147,5 @@ const Orders = () => {
     </Main>
   );
 };
+
+export default Orders;
