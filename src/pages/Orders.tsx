@@ -5,22 +5,28 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Card } from "../components/ui/card";
 import { Loader2 } from "lucide-react";
+import { Input } from "../components/ui/input";
 
 const Orders = () => {
-  const { orders, loading, cancelOrder } = useOrders();
+  const { orders, loading } = useOrders();
   const [customerName, setCustomerName] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
     // Get customer name from localStorage if exists
     const savedName = localStorage.getItem("customer_name");
     if (savedName) {
       setCustomerName(savedName);
+      setIsSubmitted(true);
     }
   }, []);
 
   const handleNameSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem("customer_name", customerName);
+    if (customerName.trim()) {
+      localStorage.setItem("customer_name", customerName);
+      setIsSubmitted(true);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -40,7 +46,7 @@ const Orders = () => {
     }
   };
 
-  if (!customerName) {
+  if (!isSubmitted) {
     return (
       <Main>
         <div className="container mx-auto px-4 py-8">
@@ -48,7 +54,7 @@ const Orders = () => {
             <Card className="p-6">
               <h2 className="text-xl font-bold mb-4">Enter Your Name</h2>
               <form onSubmit={handleNameSubmit}>
-                <input
+                <Input
                   type="text"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
@@ -131,15 +137,6 @@ const Orders = () => {
                       <p className="font-bold">Total:</p>
                       <p className="font-bold">{order.total.toFixed(2)} pencils</p>
                     </div>
-                    {order.status === 'pending' && (
-                      <Button
-                        variant="destructive"
-                        className="mt-4 w-full sketchy-button"
-                        onClick={() => cancelOrder(order.id)}
-                      >
-                        Cancel Order
-                      </Button>
-                    )}
                   </div>
                 </div>
               ))}
@@ -150,5 +147,3 @@ const Orders = () => {
     </Main>
   );
 };
-
-export default Orders;

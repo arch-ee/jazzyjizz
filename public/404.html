@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,18 +7,8 @@
     // Single Page Apps for GitHub Pages
     // MIT License
     // https://github.com/rafgraph/spa-github-pages
-    var segmentCount = 1;
     var l = window.location;
-    
-    // Log the redirection for debugging
-    console.log('404 page loaded, redirecting from:', l.pathname);
-    
-    // Simplified redirect to the hash router version
-    var redirectUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + 
-      '/jazzyjizz/#' + l.pathname.slice('/jazzyjizz'.length);
-    
-    console.log('Redirecting to:', redirectUrl);
-    window.location.replace(redirectUrl);
+    window.location.replace('https://jazzyjizz.netlify.app');
   </script>
   <style>
     body {
@@ -66,7 +55,7 @@
   <div class="container">
     <h1>Redirecting...</h1>
     <div class="spinner"></div>
-    <p>If you are not redirected automatically, <a href="/jazzyjizz/">click here</a> to go to the homepage.</p>
+    <p>If you are not redirected automatically, <a href="https://jazzyjizz.netlify.app">click here</a>.</p>
   </div>
 </body>
 </html>
