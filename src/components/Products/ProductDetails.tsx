@@ -1,9 +1,9 @@
-
 import { Product } from '../../types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { ShoppingBag } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import ProductReviews from './ProductReviews';
 
 interface ProductDetailsProps {
   product: Product;
@@ -19,7 +19,6 @@ const ProductDetails = ({ product, isOpen, onClose }: ProductDetailsProps) => {
     onClose();
   };
 
-  // Helper function to display currencies
   const displayCurrencies = () => {
     if (!product.currencies || product.currencies.length === 0) {
       return <p className="text-lg font-bold mt-1">{product.price} pencils</p>;
@@ -39,7 +38,7 @@ const ProductDetails = ({ product, isOpen, onClose }: ProductDetailsProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md max-h-screen overflow-y-auto">
+      <DialogContent className="sm:max-w-md max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{product.name}</DialogTitle>
         </DialogHeader>
@@ -67,9 +66,11 @@ const ProductDetails = ({ product, isOpen, onClose }: ProductDetailsProps) => {
             <h3 className="font-semibold">Availability</h3>
             <p>{product.inStock ? "In Stock" : "Out of Stock"}</p>
           </div>
+
+          <ProductReviews productId={product.id} />
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-2 justify-end">
+        <div className="flex flex-col sm:flex-row gap-2 justify-end mt-4">
           <Button 
             variant="outline" 
             onClick={onClose}

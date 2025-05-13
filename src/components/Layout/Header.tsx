@@ -1,26 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import { Button } from "../../components/ui/button";
 import { ShoppingBag, Menu, X, Settings } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Header = () => {
   const { totalItems } = useCart();
   const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [faviconUrl, setFaviconUrl] = useState("/favicon.ico");
+
+  useEffect(() => {
+    const fetchFavicon = async () => {
+      try {
+        const { data, error } = await supabase.storage
+          .from('assets')
+          .download('favicon.ico');
+          
+        if (error) {
+          console.error('Error fetching favicon:', error);
+          return;
+        }
+
+        const url = URL.createObjectURL(data);
+        setFaviconUrl(url);
+        
+        // Update favicon
+        const favicon = document.querySelector("link[rel*='icon']") as HTMLLinkElement;
+        favicon.href = url;
+      } catch (error) {
+        console.error('Error setting favicon:', error);
+      }
+    };
+
+    fetchFavicon();
+  }, []);
 
   return (
     <header className="bg-[#c0c0c0] border-b border-[#808080]">
       <div className="container mx-auto px-2 py-2 flex items-center justify-between">
-        {/* Logo */}
         <Link to="/" className="flex items-center">
           <span className="text-xl font-bold text-[#333]">
             Jazzy Jizz Products
           </span>
         </Link>
 
-        {/* Desktop Actions */}
         <div className="hidden md:flex items-center space-x-2">
           <Link to="/admin">
             <Button 
@@ -75,7 +101,6 @@ const Header = () => {
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
         <button
           className="md:hidden sketchy-button"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -84,7 +109,6 @@ const Header = () => {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-[#c0c0c0] border-t border-[#808080] py-2">
           <div className="container mx-auto px-4 flex flex-col space-y-2">
