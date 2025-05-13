@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -93,10 +92,31 @@
   }
   
   .window-close {
-    @apply flex items-center justify-center w-5 h-5 bg-[#c0c0c0] border border-t-white border-l-white border-b-[#808080] border-r-[#808080] text-black font-bold;
+    @apply flex items-center justify-center w-5 h-5 bg-[#c0c0c0] border border-t-white border-l-white border-b-[#808080] border-r-[#808080] text-black font-bold cursor-pointer;
   }
   
   .font-comic-sans {
     font-family: "Comic Sans MS", "Courier New", monospace;
+  }
+
+  /* Retro Loading Screen */
+  .loading-container {
+    @apply flex justify-center items-center h-screen m-0 bg-[#008080] text-white;
+  }
+  
+  .loading-content {
+    @apply bg-[#c0c0c0] border-4 border-t-white border-l-white border-b-[#808080] border-r-[#808080] p-8 text-center text-black;
+  }
+  
+  .loading-spinner {
+    @apply w-16 h-4 bg-[#000080] animate-pulse mb-4;
+  }
+  
+  .loading-text {
+    @apply text-xl font-bold font-comic-sans;
+  }
+  
+  .loading-timeout {
+    @apply hidden mt-4 text-red-600;
   }
 }

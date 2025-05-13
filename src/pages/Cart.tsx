@@ -23,8 +23,6 @@ const Cart = () => {
   
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
-    email: "",
-    address: ""
   });
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,7 +35,7 @@ const Cart = () => {
   };
   
   const handlePlaceOrder = async () => {
-    if (!customerInfo.name) {
+    if (!customerInfo.name.trim()) {
       toast({
         title: "Error",
         description: "Please enter your name",
@@ -49,7 +47,11 @@ const Cart = () => {
     setIsProcessing(true);
     
     try {
-      const order = await addOrder(customerInfo, cart, subtotal);
+      const order = await addOrder(
+        { ...customerInfo, email: "", address: "" },
+        cart,
+        subtotal
+      );
       
       if (order) {
         setOrderId(order.id);
@@ -87,7 +89,6 @@ const Cart = () => {
     );
   }
 
-  // Check if any items have insufficient stock
   const insufficientStockItems = cart.filter(item => 
     item.quantity > (item.product.stock || 0)
   );
@@ -138,17 +139,15 @@ const Cart = () => {
         
         {/* Checkout Dialog */}
         <Dialog open={showCheckoutDialog} onOpenChange={setShowCheckoutDialog}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
+          <DialogContent className="bg-[#c0c0c0] border border-[#808080] max-w-md">
+            <DialogHeader className="window-header">
               <DialogTitle>Complete Your Order</DialogTitle>
-              <DialogDescription>
-                Please provide your information to complete your order.
-              </DialogDescription>
+              <span className="window-close" onClick={() => setShowCheckoutDialog(false)}>×</span>
             </DialogHeader>
             
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">Your Name</Label>
                 <Input
                   id="name"
                   name="name"
@@ -156,29 +155,7 @@ const Cart = () => {
                   onChange={handleInputChange}
                   placeholder="John Doe"
                   required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={customerInfo.email}
-                  onChange={handleInputChange}
-                  placeholder="john@example.com"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="address">Shipping Address</Label>
-                <Input
-                  id="address"
-                  name="address"
-                  value={customerInfo.address}
-                  onChange={handleInputChange}
-                  placeholder="123 Main St, City, Country"
+                  className="font-comic-sans bg-white"
                 />
               </div>
             </div>
@@ -188,7 +165,7 @@ const Cart = () => {
                 type="button"
                 variant="outline"
                 onClick={() => setShowCheckoutDialog(false)}
-                className="mr-2"
+                className="mr-2 sketchy-button"
                 disabled={isProcessing}
               >
                 Cancel
@@ -207,22 +184,19 @@ const Cart = () => {
         
         {/* Order Confirmation Dialog */}
         <Dialog open={showConfirmationDialog} onOpenChange={setShowConfirmationDialog}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
+          <DialogContent className="bg-[#c0c0c0] border border-[#808080] max-w-md">
+            <DialogHeader className="window-header">
               <DialogTitle>Order Confirmed!</DialogTitle>
+              <span className="window-close" onClick={() => setShowConfirmationDialog(false)}>×</span>
             </DialogHeader>
             
             <div className="py-4">
-              <div className="bg-green-50 text-green-700 p-4 rounded-lg mb-4">
+              <div className="bg-[#90EE90] text-[#006400] p-4 border border-[#008000] mb-4">
                 <p className="font-medium">Thank you for your order!</p>
                 <p className="text-sm mt-1">
                   Your order #{orderId.slice(0, 8)} has been received and is being processed.
                 </p>
               </div>
-              
-              <p className="text-gray-600">
-                Your products will be shipped soon.
-              </p>
             </div>
             
             <DialogFooter>
